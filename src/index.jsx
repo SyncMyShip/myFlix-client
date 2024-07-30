@@ -1,16 +1,13 @@
 import { createRoot } from 'react-dom/client';
+import { MainView } from './components/main-view/main-view';
 
 // import statement to indicate that ./index.scss needs to be bundled
 import "./index.scss";
 
 
 // main component 
-const MyFlixApplication = () => {
-    return (
-        <div className='my-flix'>
-            <div>Good morning</div>
-        </div>
-    );
+const App = () => {
+    return <MainView />;
 };
 
 
@@ -20,4 +17,4 @@ const root = createRoot(container);
 
 
 // tell React to render your app in the root DOM element
-root.render(<MyFlixApplication />);
+root.render(<MainView />);
