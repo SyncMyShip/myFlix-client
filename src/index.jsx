@@ -17,4 +17,4 @@ const root = createRoot(container);
 
 
 // tell React to render your app in the root DOM element
-root.render(<MainView />);
+root.render(<App />);
