@@ -41,7 +41,7 @@ export const SignupView = () => {
                 <input 
                     type="text"
                     value={name}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                     required
                 />
             </label>

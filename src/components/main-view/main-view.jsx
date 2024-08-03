@@ -9,34 +9,30 @@ export const MainView = () => {
     const storedToken = localStorage.getItem("token");
     const [movies, setMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null); 
+    const [user, setUser] = useState(storedUser? storedUser : null);
+    const [token, setToken] = useState(storedToken? storedToken : null); 
 
     useEffect(() => {
-      if (!token) {
-        return;
-      }  
+      if (!token) return;
 
       fetch("https://reelrendezvous-0ea25cfde7d6.herokuapp.com/movies", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => response.json())
       .then((movies) => {
-          console.log(movies);
-      });
           const moviesFromApi = movies.map((movie) => {
-            return ({
+            return {
               id: movie._id,
               title: movie.Title,
               // image: movie.ImagePath,
               description: movie.Description,
               genre: movie.Genre["Name"],
               director: movie.Director["Name"]
-            });
+            };
           });
           setMovies(moviesFromApi);
-    }, [token]);
-
+        });
+      }, [token]);
 
     if (!user) {
       return (
@@ -58,9 +54,12 @@ export const MainView = () => {
     }
 
     if (movies.length === 0) {
-        return <div>The list is empty!</div>;
-    }
-
+        return (
+          <div>
+            <div>The list is empty!</div>
+              <button onClick={() => { setUser(null); setToken(null); localStorage.clear(); }}>Logout</button>
+            </div>     
+    )}
 
   return (
       <div>
