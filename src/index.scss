@@ -1,5 +1,13 @@
-$color: steelblue;
+// Colors
 
-.my-flix {
-    color: $color;
-}
+// #1E261F - deep blue
+// 237A8C - teal
+// CBCECE - grey-blue
+// FDFCF9 - cream
+// F9CF0D - marigold
+
+
+$primary: #F9CF0D;
+// $bs-body-bg: #FDFCF9;
+
+@import "~bootstrap/scss/bootstrap.scss";
