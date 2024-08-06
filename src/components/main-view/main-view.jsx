@@ -14,6 +14,7 @@ export const MainView = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [user, setUser] = useState(storedUser? storedUser : null);
   const [token, setToken] = useState(storedToken? storedToken : null); 
+  const [userExists, setUserExists] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -40,17 +41,20 @@ export const MainView = () => {
   return (
     <Row className="justify-content-md-center">
       {!user ? (
-        <>
-          <Col md={6} style={{padding: "50px"}}>
-            <LoginView onLoggedIn={(user, token) => {
-              setUser(user);
-              setToken(token);
-            }}
-            />
-          </Col>
+          <>
           <Col md={6} style={{padding: "50px"}}>
             <SignupView />
           </Col>
+          </>
+      ) : user ? (
+        <>
+        <Col md={6} style={{padding: "50px"}}>
+          <LoginView onLoggedIn={(user, token) => {
+            setUser(user);
+            setToken(token);
+          }}
+          />
+        </Col>
         </>
       ) : selectedMovie ? (
         <>
