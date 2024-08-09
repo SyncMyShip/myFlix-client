@@ -17,7 +17,7 @@ export const LoginView = ({ onLoggedIn }) => {
         fetch("https://reelrendezvous-0ea25cfde7d6.herokuapp.com/login", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(data)
         })
