@@ -3,6 +3,7 @@ import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
+import { ProfileView } from "../profile-view/profile-view";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
@@ -13,7 +14,6 @@ export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const storedToken = JSON.parse(localStorage.getItem("token"));
   const [movies, setMovies] = useState([]);
-  // const [selectedMovie, setSelectedMovie] = useState(null);
   const [user, setUser] = useState(storedUser? storedUser : null);
   const [token, setToken] = useState(storedToken? storedToken : null); 
 
@@ -84,6 +84,22 @@ export const MainView = () => {
             }
           />
           <Route
+            path="/users/:Username"
+            element={
+              <>
+                {!user ? (
+                  <Navigate to="/login" replace />
+                ) : (
+                  <Col md={6} style={{padding: "50px"}}>
+                    <ProfileView 
+                      user={user}
+                    />
+                  </Col>
+                )}
+              </>
+            }
+          />
+          <Route
             path="/movies/:Title"
             element={
               <>
@@ -116,10 +132,6 @@ export const MainView = () => {
                     <Col className="mb-5" md={3} key={movie.id}>
                         <MovieCard 
                             movie={movie} />
-                            {/* onMovieClick={(newSelectedMovie) => {
-                                setSelectedMovie(newSelectedMovie);
-                            }} 
-                        /> */}
                     </Col>
                     ))}
                   </>

@@ -1,10 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, Card } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-export const MovieCard = ({ movie }) => {
-
+export const FavoritesView = ( favoriteMovies ) => {
     return (
         <Card className="h-100">
             <Card.Img className="w-100" variant="top" src={movie.image} />
@@ -17,14 +16,4 @@ export const MovieCard = ({ movie }) => {
             </Card.Body>
         </Card>
     );
-};
-
-MovieCard.propTypes = {
-    movie: PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        image: PropTypes.string,
-        description: PropTypes.string.isRequired,
-        genre: PropTypes.string,
-        director: PropTypes.string,
-    }).isRequired,
-};
+}
