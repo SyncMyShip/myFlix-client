@@ -90,9 +90,10 @@ export const MainView = () => {
                 {!user ? (
                   <Navigate to="/login" replace />
                 ) : (
-                  <Col md={6} style={{padding: "50px"}}>
+                  <Col style={{padding: "50px"}}>
                     <ProfileView 
                       user={user}
+                      token={token}
                     />
                   </Col>
                 )}
