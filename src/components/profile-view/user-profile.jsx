@@ -1,10 +1,18 @@
 import React from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 
-export const UserProfile = ({ name, username, email, birthday }) => {
+export const UserProfile = () => {
+    
+    const user = JSON.parse(localStorage.getItem("user"));
+    const name = useState(user?.Name);
+    const username = useState(user?.Username);
+    const email = useState(user?.Email);
+    const birthday = useState(user?.DateOfBirth);
+    formatedBirthday = birthday.toString().split('T')[0].replace(/-/g, '-');
 
     return (
         <Row className="justify-content-center">
@@ -15,7 +23,7 @@ export const UserProfile = ({ name, username, email, birthday }) => {
                         <Card.Text>Name: {name}</Card.Text>
                         <Card.Text>Username: {username}</Card.Text>
                         <Card.Text>Email: {email}</Card.Text>
-                        <Card.Text>Birthday: {birthday}</Card.Text>
+                        <Card.Text>Birthday: {formatedBirthday}</Card.Text>
                         <Link to={"/"}> 
                             <Button variant="primary" className="back-button">Back</Button>
                         </Link>

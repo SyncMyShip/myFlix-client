@@ -88,12 +88,11 @@ export const MainView = () => {
             element={
               <>
                 {!user ? (
-                  <Navigate to="/login" replace />
+                  <Navigate to="/login" />
                 ) : (
                   <Col style={{padding: "50px"}}>
                     <ProfileView 
                       user={user}
-                      token={token}
                     />
                   </Col>
                 )}
@@ -112,7 +111,8 @@ export const MainView = () => {
                   <Col md={6} style={{padding: "50px"}}>
                     <MovieView 
                       movies={movies} 
-                      // key={movies.id}
+                      addFavorite={addMovieToFavorites}
+                      removeFavorite={removeMovieFromFavorites}
                     />
                   </Col>
                 )}

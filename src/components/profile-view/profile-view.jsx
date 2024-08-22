@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { Row, Col, Card, Button, Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { UserProfile } from "./user-profile";
 import { UpdateProfile } from "./update-profile";
 import { DeleteUser } from "./delete-user";
 import { FavoriteMovies } from "./favorites-view";
 import { useNavigate } from "react-router";
-import { MovieView } from "../movie-view/movie-view";
 
 
-export const ProfileView = ({ user, token, handleFavorites }) => {
-    const [movies, setMovies] = useState([]);
-    const [favMovies, setFavMovies] = useState([]);
+export const ProfileView = ({ user, token, addFavorite, removeFavorite }) => {
     const navigate = useNavigate();
+    const [movies, setMovies] = useState([]);
 
 // Handle Movies
     useEffect(() => {
@@ -40,16 +37,6 @@ export const ProfileView = ({ user, token, handleFavorites }) => {
           })
       }, [token]);
 
-// Handle Users
-    useEffect(() => {
-        if (user) {
-            setFavMovies(user.favMovies || []);
-        }
-    }, [user]);
-
-
-    const favoritesList = movies.filter((m) => favMovies.includes(m._id));
-
 
     return (
         <Row className="justify-content-center">
@@ -65,28 +52,21 @@ export const ProfileView = ({ user, token, handleFavorites }) => {
 
                 <div>
                     <UpdateProfile
+                        user={user}
                         name={user.Name}
                         username={user.Username}
-                        password={user.Password}
                         email={user.Email}
                         birthday={user.DateOfBirth}
                         token={token}
                     /> 
                 </div>
-
                 <div>
-                    <MovieView
-                        movies={movies}
-                        favMovies={favMovies}
-                        favoritesHandler={handleFavorites}
-                    />
-
                     <FavoriteMovies
                         user={user}
-                        favMovies={favMovies}
-                        favoritesHandler={handleFavorites}
-                        favoritesList={favoritesList}
-                    /> 
+                        movies={movies}
+                        addMovieToFavorites={addFavorite}
+                        removeMovieFromFavorites={removeFavorite}
+                    />
                 </div>
 
                 <div>

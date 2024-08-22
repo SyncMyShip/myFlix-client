@@ -8,15 +8,15 @@ import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 
 
-export const MovieView = ({ movies, favoritesHandler, favMovies =[] }) => {
+export const MovieView = ({ movies, isFavoriteMovie, addFavorite, removeFavorite }) => {
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
 
-    const handleFavorites = () => {
-        if (movie) {
-            favoritesHandler(movie._id);
-        }
-    };
+    // const handleFavorites = () => {
+    //     if (movie) {
+    //         favoritesHandler(movie.id);
+    //     }
+    // };
 
     return (
         <Row className="justify-content-center">
@@ -29,8 +29,11 @@ export const MovieView = ({ movies, favoritesHandler, favMovies =[] }) => {
                             <Card.Text >Description: {movie.description}</Card.Text>
                             <Card.Text>Director: {movie.director}</Card.Text>
                             <Card.Text>Genre: {movie.genre}</Card.Text>
-                            <Button variant={favMovies.includes(movie._id) ? "secondary" : "primary"} onClick={handleFavorites}>
-                                {favMovies.includes(movie._id) ? "Remove from Favorites" : "Add to Favorites"}
+                            <Button 
+                                onClick={isFavoriteMovie ? removeFavorite : addFavorite}
+                                variant={isFavoriteMovie ? "danger" : "primary"}
+                            >
+                                {isFavoriteMovie ? "Remove from Favorites" : "Add to Favorites"}
                             </Button>
                         </Card.Body>
                         <Link to={"/"}> 
@@ -47,7 +50,7 @@ export const MovieView = ({ movies, favoritesHandler, favMovies =[] }) => {
 MovieView.propTypes = {
     movies: PropTypes.arrayOf( 
         PropTypes.shape({
-            _id: PropTypes.string.isRequired,
+            id: PropTypes.string.isRequired,
             title: PropTypes.string.isRequired,
             image: PropTypes.string.isRequired,
             description: PropTypes.string.isRequired,
@@ -55,6 +58,7 @@ MovieView.propTypes = {
             director: PropTypes.string,
         })
     ).isRequired,
-    favoritesHandler: PropTypes.func.isRequired,
-    favMovies: PropTypes.arrayOf(PropTypes.string)
+    isFavoriteMovie: PropTypes.bool.isRequired,
+    addFavorite: PropTypes.func.isRequired,
+    removeFavorite: PropTypes.func.isRequired
 };

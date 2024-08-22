@@ -1,67 +1,55 @@
 
-import{ useState } from "react";
+import{ useState, useEffect } from "react";
 import { Row, Col, Card, Button, Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import React from "react";
 import PropTypes from "prop-types";
 
-export const UpdateProfile = (updatedUser) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+export const UpdateProfile = ({ user }) => {
     const token = JSON.parse(localStorage.getItem("token"));
+    const [name, setName] = useState(user?.Name || "");
+    const [username, setUsername] = useState(user?.Username || "");
+    const [email, setEmail] = useState(user?.Email || "");
+    const [birthday, setBirthday] = useState(user?.DateOfBirth || "");
+    const [isValid, setIsValid] = useState(false);
 
-    // const [editedUser, setEditedUser] = useState(null);
-    const [name, setName] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
-    const [birthday, setBirthday] = useState("");
-    
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    useEffect(() => {
 
-        const data = {
-            Name: name,
-            Username: username,
-            Password: password,
-            Email: email,
-            DateOfBirth: birthday 
-        };
+        const isFormValid = name || username || email || birthday;
+        setIsValid(isFormValid);
+    }, [name, username, email, birthday]);
 
-        try {
-            const response = fetch(`https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${username}`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(data)
-        })
+        const handleSubmit = async (event) => {
+                event.preventDefault();
 
-        // then((response) => {
-            if (response.ok) {
-                const updatedData = await response.json();
-                alert("User update successful");
-                // return updatedData = response.json();
-                updatedUser(updatedData)
-            } else {
-                alert("User update failed");
-            }
-        }
-            catch (err) {
-                console.log(err)
-            }
-        // }).then((data) => {
-        //     // updatedUser(data);
-        //     setName(name),
-        //     setUsername(username),
-        //     setPassword(password),
-        //     setEmail(email),
-        //     setBirthday(birthday)
-        //     window.location.reload();
-        // }).catch((err) => {
-        //     console.log(err);
-        // })
+            const originalUsername = user.Username;
+
+            try {
+            const response = await fetch(`https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${originalUsername}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    Name: name,
+                    Username: username,
+                    Email: email,
+                    DateOfBirth: birthday
+                })
+            });
+        
+
+                if (response.ok) {
+                    alert("User successfully updated");
+                } else {
+                    const errData = await response.json()
+                    console.error("Update failed:", errData)
+                    alert("Failed to update user");
+                }
+            } catch (err) {
+                    console.error("Error updating user:", err);
+                }
     };
 
     return (
@@ -89,16 +77,6 @@ export const UpdateProfile = (updatedUser) => {
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formPassword">
-                            <Form.Label>Password:</Form.Label>
-                        <Form.Control 
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                minLength={10}
-                            />
-                        </Form.Group>
-
                         <Form.Group className="mb-3" controlId="formEmail">
                             <Form.Label>Email:</Form.Label>
                         <Form.Control 
@@ -116,7 +94,13 @@ export const UpdateProfile = (updatedUser) => {
                                 onChange={(e) => setBirthday(e.target.value)}
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit">Update</Button>
+                        <Button 
+                            variant="primary" 
+                            type="submit"
+                            disabled={!isValid}
+                        >
+                            Update
+                        </Button>
                     </Form>
                 </Card>
             </Col>
@@ -124,8 +108,4 @@ export const UpdateProfile = (updatedUser) => {
     );
 }
 
-UpdateProfile.propTypes = {
-    user: PropTypes.object.isRequired,
-    // updatedUser: PropTypes.func.isRequired
-}
 
