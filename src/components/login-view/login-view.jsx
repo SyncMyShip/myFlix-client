@@ -1,12 +1,10 @@
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useNavigate } from "react-router";
 
 export const LoginView = ({ onLoggedIn }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -19,7 +17,7 @@ export const LoginView = ({ onLoggedIn }) => {
         fetch("https://reelrendezvous-0ea25cfde7d6.herokuapp.com/login", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(data)
         })
@@ -32,7 +30,6 @@ export const LoginView = ({ onLoggedIn }) => {
                 onLoggedIn(data.user, data.token);
             } else {
                 alert("No such user");
-                navigate("/signup")
             }
         })
         .catch((e) => {

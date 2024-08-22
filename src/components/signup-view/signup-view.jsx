@@ -2,7 +2,6 @@
 import{ useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useNavigate } from "react-router-dom";
 
 export const SignupView = () => {
     const [name, setName] = useState("");
@@ -10,8 +9,6 @@ export const SignupView = () => {
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [birthday, setBirthday] = useState("");
-    const navigate = useNavigate();
-
     
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -24,7 +21,7 @@ export const SignupView = () => {
             DateOfBirth: birthday 
         };
 
-        fetch("https://reelrendezvous-0ea25cfde7d6.herokuapp.com/signup", {
+        fetch("https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users", {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -33,7 +30,7 @@ export const SignupView = () => {
         }).then((response) => {
             if (response.ok) {
                 alert("Signup successful");
-                navigate('/login');
+                window.location.reload();
             } else {
                 alert("Signup failed");
             }
