@@ -14,8 +14,8 @@ export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const storedToken = localStorage.getItem("token");
   const [movies, setMovies] = useState([]);
-  const [user, setUser] = useState(storedUser? storedUser : null);
-  const [token, setToken] = useState(storedToken? storedToken : null); 
+  const [user, setUser] = useState(storedUser ? storedUser : null);
+  const [token, setToken] = useState(storedToken ? storedToken : null);
 
   useEffect(() => {
     if (!token) return;
@@ -23,8 +23,8 @@ export const MainView = () => {
     fetch("https://reelrendezvous-0ea25cfde7d6.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => response.json())
-    .then((movies) => {
+      .then((response) => response.json())
+      .then((movies) => {
         const moviesFromApi = movies.map((movie) => {
           return {
             id: movie._id,
@@ -32,16 +32,21 @@ export const MainView = () => {
             image: movie.ImagePath,
             description: movie.Description,
             genre: movie.Genre["Name"],
-            director: movie.Director["Name"]
-          };  
+            director: movie.Director["Name"],
+          };
         });
         setMovies(moviesFromApi);
-      })
+      });
   }, [token]);
+
+  const syncUser = (user) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    setUser(user);
+  };
 
   return (
     <BrowserRouter>
-      <NavigationBar 
+      <NavigationBar
         user={user}
         onLoggedOut={() => {
           setUser(null);
@@ -51,14 +56,14 @@ export const MainView = () => {
       />
       <Row className="justify-content-md-center">
         <Routes>
-        <Route
+          <Route
             path="/signup"
             element={
               <>
                 {user ? (
                   <Navigate to="/" />
                 ) : (
-                  <Col md={6} style={{padding: "50px"}}>
+                  <Col md={6} style={{ padding: "50px" }}>
                     <SignupView />
                   </Col>
                 )}
@@ -72,13 +77,14 @@ export const MainView = () => {
                 {user ? (
                   <Navigate to="/" />
                 ) : (
-                  <Col md={6} style={{padding: "50px"}}>
-                  <LoginView onLoggedIn={(user, token) => {
-                    setUser(user); 
-                    setToken(token);
-                  }}
+                  <Col md={6} style={{ padding: "50px" }}>
+                    <LoginView
+                      onLoggedIn={(user, token) => {
+                        setUser(user);
+                        setToken(token);
+                      }}
                     />
-                </Col>
+                  </Col>
                 )}
               </>
             }
@@ -90,12 +96,8 @@ export const MainView = () => {
                 {!user ? (
                   <Navigate to="/login" />
                 ) : (
-                  <Col style={{padding: "50px"}}>
-                    <ProfileView 
-                      user={user}
-                      token={token}
-                      movies={movies}
-                    />
+                  <Col style={{ padding: "50px" }}>
+                    <ProfileView user={user} token={token} movies={movies} />
                   </Col>
                 )}
               </>
@@ -110,11 +112,12 @@ export const MainView = () => {
                 ) : movies.length === 0 ? (
                   <Col>The list is empty!</Col>
                 ) : (
-                  <Col md={6} style={{padding: "50px"}}>
-                    <MovieView 
-                      movies={movies} 
+                  <Col md={6} style={{ padding: "50px" }}>
+                    <MovieView
+                      movies={movies}
                       user={user}
                       token={token}
+                      syncUser={syncUser}
                     />
                   </Col>
                 )}
@@ -132,10 +135,9 @@ export const MainView = () => {
                 ) : (
                   <>
                     {movies.map((movie) => (
-                    <Col className="mb-5" md={3} key={movie.id}>
-                        <MovieCard 
-                            movie={movie} />
-                    </Col>
+                      <Col className="mb-5" md={3} key={movie.id}>
+                        <MovieCard movie={movie} />
+                      </Col>
                     ))}
                   </>
                 )}

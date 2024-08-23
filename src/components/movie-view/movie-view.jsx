@@ -8,34 +8,39 @@ import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 
 
-export const MovieView = ({ user, token, movies, isFavoriteMovie }) => {
+export const MovieView = ({ user, token, movies, syncUser }) => {
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
-
+    let isFavoriteMovie = user.FavoriteMovies.includes(movie.id);
+  
     const handleFavorites = async () => {
-        const method = isFavoriteMovie ? "DELETE" : "POST";
-        const url = `https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${user.Username}/movies/${movie.id}`
-       
-        try {
+      const method = isFavoriteMovie ? "DELETE" : "POST";
+      const url = `https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${user.Username}/movies/${movie.id}`;
+  
+      try {
         const response = await fetch(url, {
-            method,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
-    
-            if (response.ok) {
-                const status = isFavoriteMovie ? "removed from" : "added to" 
-                alert(`Movie ${status} Favorites`);
-            } else {
-                const errData = await response.json()
-                console.error("Failed to update Favorites:", errData)
-                alert("Failed to update Favorites");
-            }
-        } catch (err) {
-                console.error("Error updating Favorites:", err);
-            }
+  
+        if (response.ok) {
+          const data = await response.json();
+          syncUser(data);
+  
+          const status = isFavoriteMovie ? "removed from" : "added to";
+          alert(`Movie ${status} Favorites`);
+        } else {
+          const errData = await response.json();
+  
+          console.error("Failed to update Favorites:", errData);
+          alert("Failed to update Favorites");
+        }
+      } catch (err) {
+        console.error("Error updating Favorites:", err);
+      }
     };
 
 
