@@ -8,25 +8,29 @@ import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 
 
-export const MovieView = ({ user, token, movies, isFavoriteMovie }) => {
+export const MovieView = ({ user, token, movies, syncUser }) => {
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
+    let isFavoriteMovie = user.FavoriteMovies.includes(movie.id);
 
     const handleFavorites = async () => {
         const method = isFavoriteMovie ? "DELETE" : "POST";
-        const url = `https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${user.Username}/movies/${movie.id}`
+        const url = `https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${user.Username}/movies/${movie.id}`;
        
         try {
         const response = await fetch(url, {
             method,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`,
             },
         });
     
             if (response.ok) {
-                const status = isFavoriteMovie ? "removed from" : "added to" 
+                const data = await response.json();
+                syncUser(data);
+
+                const status = isFavoriteMovie ? "removed from" : "added to"; 
                 alert(`Movie ${status} Favorites`);
             } else {
                 const errData = await response.json()
@@ -35,33 +39,8 @@ export const MovieView = ({ user, token, movies, isFavoriteMovie }) => {
             }
         } catch (err) {
                 console.error("Error updating Favorites:", err);
-            }
+        }
     };
-
-
-    // const removeMovieFromFavorites = async () => {
-    //         try {
-    //         const response = await fetch(`https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
-    //             method: "DELETE",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${token}`
-    //             },
-    //         });
-        
-
-    //             if (response.ok) {
-    //                 alert("Movie removed from Favorites");
-    //                 handleFavorites();
-    //             } else {
-    //                 const errData = await response.json()
-    //                 console.error("Failed to remove movie from Favorites:", errData)
-    //                 alert("Failed to remove movie from Favorites");
-    //             }
-    //         } catch (err) {
-    //                 console.error("Error removing movie from Favorites:", err);
-    //             }
-    // };
 
 
     return (
@@ -91,20 +70,3 @@ export const MovieView = ({ user, token, movies, isFavoriteMovie }) => {
         </Row>
     );
 };
-
-
-// MovieView.propTypes = {
-//     movies: PropTypes.arrayOf( 
-//         PropTypes.shape({
-//             id: PropTypes.string.isRequired,
-//             title: PropTypes.string.isRequired,
-//             image: PropTypes.string.isRequired,
-//             description: PropTypes.string.isRequired,
-//             genre: PropTypes.string,
-//             director: PropTypes.string,
-//         })
-//     ).isRequired,
-//     // isFavoriteMovie: PropTypes.bool.isRequired,
-//     // addFavorite: PropTypes.func.isRequired,
-//     // removeFavorite: PropTypes.func.isRequired
-// };
