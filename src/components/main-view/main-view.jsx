@@ -12,7 +12,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  const storedToken = JSON.parse(localStorage.getItem("token"));
+  const storedToken = localStorage.getItem("token");
   const [movies, setMovies] = useState([]);
   const [user, setUser] = useState(storedUser? storedUser : null);
   const [token, setToken] = useState(storedToken? storedToken : null); 
@@ -93,6 +93,8 @@ export const MainView = () => {
                   <Col style={{padding: "50px"}}>
                     <ProfileView 
                       user={user}
+                      token={token}
+                      movies={movies}
                     />
                   </Col>
                 )}
@@ -111,8 +113,8 @@ export const MainView = () => {
                   <Col md={6} style={{padding: "50px"}}>
                     <MovieView 
                       movies={movies} 
-                      addFavorite={addMovieToFavorites}
-                      removeFavorite={removeMovieFromFavorites}
+                      user={user}
+                      token={token}
                     />
                   </Col>
                 )}

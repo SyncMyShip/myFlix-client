@@ -5,8 +5,8 @@ import Form from "react-bootstrap/Form";
 import React from "react";
 import PropTypes from "prop-types";
 
-export const UpdateProfile = ({ user }) => {
-    const token = JSON.parse(localStorage.getItem("token"));
+export const UpdateProfile = ({ user, token }) => {
+    // const token = localStorage.getItem("token");
     const [name, setName] = useState(user?.Name || "");
     const [username, setUsername] = useState(user?.Username || "");
     const [email, setEmail] = useState(user?.Email || "");
