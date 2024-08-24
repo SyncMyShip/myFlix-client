@@ -10,7 +10,7 @@ import Col from "react-bootstrap/Col";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export const MainView = () => {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedUser = JSON.stringify(localStorage.getItem("user"));
   const storedToken = localStorage.getItem("token");
   const [movies, setMovies] = useState([]);
   const [user, setUser] = useState(storedUser ? storedUser : null);
@@ -79,13 +79,13 @@ export const MainView = () => {
                     <Navigate to="/" />
                   ) : (
                     <Col md={6} style={{ padding: "50px" }}>
-                      <LoginView 
+                      <LoginView
                         onLoggedIn={(user, token) => {
-                        setUser(user); 
-                        setToken(token);
+                          setUser(user);
+                          setToken(token);
                         }}
                       />
-                  </Col>
+                    </Col>
                   )}
                 </>
               }
@@ -143,11 +143,11 @@ export const MainView = () => {
                   ) : (
                     <>
                       {movies.map((movie) => (
-                      <Col className="mb-5" md={3} key={movie.id}>
-                          <MovieCard 
-                            movie={movie} 
-                          />
-                      </Col>
+                        <Col className="mb-5" md={3} key={movie.id}>
+                            <MovieCard 
+                              movie={movie} 
+                            />
+                        </Col>
                       ))}
                     </>
                   )}

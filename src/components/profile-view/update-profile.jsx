@@ -41,7 +41,9 @@ export const UpdateProfile = ({ user, token }) => {
         
 
                 if (response.ok) {
+                    // const data = await response.json();
                     alert("User successfully updated");
+                    // syncUser(data)
                 } else {
                     const errData = await response.json()
                     console.error("Update failed:", errData)
