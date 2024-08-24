@@ -3,10 +3,10 @@ import{ useState, useEffect } from "react";
 import { Row, Col, Card, Button, Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import React from "react";
-import PropTypes from "prop-types";
 
 export const UpdateProfile = ({ token, syncUser }) => {
-    // const token = localStorage.getItem("token");
+    const [userData, setUserData] = useState(() => JSON.parse(localStorage.getItem("user")));
+
     const user = JSON.parse(localStorage.getItem("user"));
     const [name, setName] = useState(user?.Name || "");
     const [username, setUsername] = useState(user?.Username || "");
@@ -19,6 +19,13 @@ export const UpdateProfile = ({ token, syncUser }) => {
         const isFormValid = name || username || email || birthday;
         setIsValid(isFormValid);
     }, [name, username, email, birthday]);
+
+    const handleStorageChange = (event) => {
+        if (event.key === "user") {
+          setUserData(JSON.parse(localStorage.getItem("user")));
+        }
+      };
+
 
         const handleSubmit = async (event) => {
                 event.preventDefault();
@@ -44,6 +51,8 @@ export const UpdateProfile = ({ token, syncUser }) => {
                 if (response.ok) {
                     const data = await response.json();
                     syncUser(data);
+                    // Add the storage event listener
+                    window.addEventListener("storage", handleStorageChange);
                     alert("User successfully updated");
                 } else {
                     const errData = await response.json()

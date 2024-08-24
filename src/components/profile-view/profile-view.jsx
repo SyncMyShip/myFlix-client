@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useEffect } from "react";
-import { Row, Col, Card, Button, Container } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { UserProfile } from "./user-profile";
 import { UpdateProfile } from "./update-profile";
 import { DeleteUser } from "./delete-user";
@@ -8,21 +7,21 @@ import { FavoriteMovies } from "./favorites-view";
 import { useNavigate } from "react-router";
 
 
-export const ProfileView = ({ user, token, movies, syncUser, isFavoriteMovie, handleFavorites }) => {
+export const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFavorites }) => {
     const navigate = useNavigate();
-    // const [movies, setMovies] = useState([]);
+    const user = JSON.parse(localStorage.getItem("user"));
+
 
 
     return (
         <Row className="justify-content-center">
-            <Col md={10} className="align-items-stretch">
+            <Col md={10} className="align-items-stretch" style={{ padding: "50px" }}>
                 <div>
                     <UserProfile
                         name={user.Name}
                         username={user.Username}
                         email={user.Email}
                         birthday={user.DateOfBirth}
-                        syncUser={syncUser}
                     />
                 </div>
 
