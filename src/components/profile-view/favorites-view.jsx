@@ -10,15 +10,14 @@ export const FavoriteMovies = ({ movies, title, isFavoriteMovie }) => {
     const movie = movies.find((m) => m.title === Title);
 
 
-    // useEffect(() => {
-    //     const favorites = movies.map((movie) => {
-    //         return {
-    //             key
-    //             title: movie.title
-    //         }
-    //     })
-    //     setIsFav(favorites);
-    // }, [movies]);
+    useEffect(() => {
+        const favorites = movies.map((movie) => {
+            return {
+                title: movie.title
+            }
+        })
+        setIsFav(favorites);
+    }, [movies]);
 
 
     return (
@@ -44,7 +43,7 @@ export const FavoriteMovies = ({ movies, title, isFavoriteMovie }) => {
 
 
 
-// FavoriteMovies.propTypes = {
-//     movies: PropTypes.string.isRequired,
-//     // favorite: PropTypes.bool.isRequired,
-//   };
+FavoriteMovies.propTypes = {
+    movies: PropTypes.string.isRequired,
+    // favorite: PropTypes.bool.isRequired,
+  };

@@ -14,7 +14,6 @@ export const UserProfile = () => {
     const birthday = useState(user?.DateOfBirth);
     formatedBirthday = birthday.toString().split('T')[0].replace(/-/g, '-');
 
-
     return (
         <Row className="justify-content-center">
             <Col className="mb-3">

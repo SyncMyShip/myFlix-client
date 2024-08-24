@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "./movie-view.scss";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
@@ -10,7 +11,7 @@ import { Link } from "react-router-dom";
 export const MovieView = ({ user, token, movies, syncUser }) => {
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
-    let isFavoriteMovie = user.FavoriteMovies.includes(movie.title);
+    let isFavoriteMovie = user.FavoriteMovies.includes(movie.id);
 
     const handleFavorites = async () => {
         const method = isFavoriteMovie ? "DELETE" : "POST";
@@ -27,7 +28,6 @@ export const MovieView = ({ user, token, movies, syncUser }) => {
     
             if (response.ok) {
                 const data = await response.json();
-                console.log(movie.Title)
                 syncUser(data);
 
                 const status = isFavoriteMovie ? "removed from" : "added to"; 

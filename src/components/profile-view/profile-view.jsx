@@ -10,12 +10,35 @@ import { useNavigate } from "react-router";
 
 export const ProfileView = ({ user, token, movies, isFavoriteMovie, handleFavoritesList }) => {
     const navigate = useNavigate();
+    // const [movies, setMovies] = useState([]);
 
-    // Update user info in local storage - keep track of user updates
-    // const syncUser = (user) => {
-    //     localStorage.setItem("user", JSON.stringify(user));
-    //     setUser(user);
-    // };
+// // Handle Movies
+//     useEffect(() => {
+//         if (!token) return;
+    
+//         fetch("https://reelrendezvous-0ea25cfde7d6.herokuapp.com/movies", {
+//           headers: { Authorization: `Bearer ${token}` },
+//         })
+//         .then((response) => response.json())
+//         .then((movies) => {
+//             const moviesFromApi = movies.map((movie) => {
+//               return {
+//                 _id: movie._id,
+//                 title: movie.Title,
+//                 image: movie.ImagePath,
+//                 description: movie.Description,
+//                 genre: movie.Genre["Name"],
+//                 director: movie.Director["Name"]
+//               };  
+//             });
+//             setMovies(moviesFromApi);
+//           }).catch((err) => {
+//             console.log(err)
+//           })
+//       }, [token]);
+
+
+
 
     return (
         <Row className="justify-content-center">
@@ -41,13 +64,14 @@ export const ProfileView = ({ user, token, movies, isFavoriteMovie, handleFavori
                 </div>
                 <div>
                     <FavoriteMovies
-                        key={movies.id}
-                        title={movies.Title}
                         user={user}
                         movies={movies}
+                        title={movies.Title}
                         token={token}
                         isFavoriteMovie={isFavoriteMovie}
+                        // addMovieToFavorites={movieId}
                         handleFavoritesList={handleFavoritesList}
+                        // removeMovieFromFavorites={movieId}
                     />
                 </div>
 
