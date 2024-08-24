@@ -10,11 +10,11 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-export const MainView = ( user ) => {
-  // const storedUser = JSON.stringify(localStorage.getItem("user"));
+export const MainView = ( ) => {
+  const storedUser = JSON.stringify(localStorage.getItem("user"));
   const storedToken = localStorage.getItem("token");
   const [movies, setMovies] = useState([]);
-  // const [user, setUser] = useState(storedUser ? storedUser : null);
+  const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
 
   useEffect(() => {
@@ -38,6 +38,11 @@ export const MainView = ( user ) => {
         setMovies(moviesFromApi);
       });
   }, [token]);
+
+  const syncUser = (user) => {
+    localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+  }
 
   return (
     <BrowserRouter>
@@ -112,7 +117,7 @@ export const MainView = ( user ) => {
                       movies={movies}
                       user={user}
                       token={token}
-                      // syncUser={syncUser}
+                      syncUser={syncUser}
                     />
                   </Col>
                 )}
