@@ -5,7 +5,7 @@ import { Row, Col, Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 
-export const UserProfile = () => {
+export const UserProfile = (syncUser) => {
     
     const user = JSON.parse(localStorage.getItem("user"));
     const name = useState(user?.Name);

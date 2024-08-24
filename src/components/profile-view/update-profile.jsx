@@ -5,8 +5,9 @@ import Form from "react-bootstrap/Form";
 import React from "react";
 import PropTypes from "prop-types";
 
-export const UpdateProfile = ({ user, token }) => {
+export const UpdateProfile = ({ token, syncUser }) => {
     // const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
     const [name, setName] = useState(user?.Name || "");
     const [username, setUsername] = useState(user?.Username || "");
     const [email, setEmail] = useState(user?.Email || "");
@@ -41,6 +42,8 @@ export const UpdateProfile = ({ user, token }) => {
         
 
                 if (response.ok) {
+                    const data = await response.json();
+                    syncUser(data);
                     alert("User successfully updated");
                 } else {
                     const errData = await response.json()

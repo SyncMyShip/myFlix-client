@@ -8,36 +8,9 @@ import { FavoriteMovies } from "./favorites-view";
 import { useNavigate } from "react-router";
 
 
-export const ProfileView = ({ user, token, movies, isFavoriteMovie, handleFavoritesList }) => {
+export const ProfileView = ({ user, token, movies, syncUser, isFavoriteMovie, handleFavorites }) => {
     const navigate = useNavigate();
     // const [movies, setMovies] = useState([]);
-
-// // Handle Movies
-//     useEffect(() => {
-//         if (!token) return;
-    
-//         fetch("https://reelrendezvous-0ea25cfde7d6.herokuapp.com/movies", {
-//           headers: { Authorization: `Bearer ${token}` },
-//         })
-//         .then((response) => response.json())
-//         .then((movies) => {
-//             const moviesFromApi = movies.map((movie) => {
-//               return {
-//                 _id: movie._id,
-//                 title: movie.Title,
-//                 image: movie.ImagePath,
-//                 description: movie.Description,
-//                 genre: movie.Genre["Name"],
-//                 director: movie.Director["Name"]
-//               };  
-//             });
-//             setMovies(moviesFromApi);
-//           }).catch((err) => {
-//             console.log(err)
-//           })
-//       }, [token]);
-
-
 
 
     return (
@@ -49,6 +22,7 @@ export const ProfileView = ({ user, token, movies, isFavoriteMovie, handleFavori
                         username={user.Username}
                         email={user.Email}
                         birthday={user.DateOfBirth}
+                        syncUser={syncUser}
                     />
                 </div>
 
@@ -60,6 +34,7 @@ export const ProfileView = ({ user, token, movies, isFavoriteMovie, handleFavori
                         email={user.Email}
                         birthday={user.DateOfBirth}
                         token={token}
+                        syncUser={syncUser}
                     /> 
                 </div>
                 <div>
@@ -69,9 +44,7 @@ export const ProfileView = ({ user, token, movies, isFavoriteMovie, handleFavori
                         title={movies.Title}
                         token={token}
                         isFavoriteMovie={isFavoriteMovie}
-                        // addMovieToFavorites={movieId}
-                        handleFavoritesList={handleFavoritesList}
-                        // removeMovieFromFavorites={movieId}
+                        handleFavorites={handleFavorites}
                     />
                 </div>
 

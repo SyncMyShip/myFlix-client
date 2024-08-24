@@ -11,15 +11,15 @@ import { Link } from "react-router-dom";
 export const MovieView = ({ token, movies, syncUser }) => {
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
-    const user = JSON.stringify(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     
-    // let isFavoriteMovie = user.FavoriteMovies.includes(movie.id)
-    let isFavoriteMovie = user.FavoriteMovies
-    isFavoriteMovie ? true : false
+    let isFavoriteMovie = user.FavoriteMovies.includes(movie.id)
+    // let isFavoriteMovie = user.FavoriteMovies
+    // isFavoriteMovie ? true : false
   
     const handleFavorites = async () => {
       const method = isFavoriteMovie ? "DELETE" : "POST";
-      const url = `https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/jaxonraplesfrancis/movies/${movie.id}`;
+      const url = `https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${user.Username}/movies/${movie.id}`;
   
       try {
         const response = await fetch(url, {

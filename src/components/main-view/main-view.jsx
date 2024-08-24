@@ -94,10 +94,15 @@ export const MainView = ( ) => {
             element={
               <>
                 {!user ? (
-                  <Navigate to="/login" />
+                  <Navigate to="/login" replace/>
                 ) : (
                   <Col style={{ padding: "50px" }}>
-                    <ProfileView user={user} token={token} movies={movies} />
+                    <ProfileView 
+                      user={user} 
+                      token={token} 
+                      movies={movies} 
+                      syncUser={syncUser}
+                    />
                   </Col>
                 )}
               </>
@@ -115,7 +120,6 @@ export const MainView = ( ) => {
                   <Col md={6} style={{ padding: "50px" }}>
                     <MovieView
                       movies={movies}
-                      user={user}
                       token={token}
                       syncUser={syncUser}
                     />

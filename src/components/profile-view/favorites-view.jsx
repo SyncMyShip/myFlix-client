@@ -4,19 +4,18 @@ import { useParams } from "react-router-dom";
 import { Row, Col, Card } from "react-bootstrap";
 
 
-export const FavoriteMovies = ({ movies, title, isFavoriteMovie }) => {
-    const [isFav, setIsFav] = useState([]);
-    const { Title } = useParams();
-    const movie = movies.find((m) => m.title === Title);
+export const FavoriteMovies = ({ movies }) => {
+    const [favoriteMovies, setFavoriteMovies] = useState([]);
+    const user = JSON.parse(localStorage.getItem("user"));
 
-
+    // Set favorite movies when the component mounts or when `movies` updates
     useEffect(() => {
-        const favorites = movies.map((movie) => {
-            return {
-                title: movie.title
-            }
-        })
-        setIsFav(favorites);
+        if (movies && Array.isArray(movies)) {
+                const isFavoriteMovie = user.FavoriteMovies;
+                const favorites = movies.filter((movie) => isFavoriteMovie.includes(movie.id));
+                setFavoriteMovies(favorites);
+            setFavoriteMovies(favorites);
+        }
     }, [movies]);
 
 
@@ -26,10 +25,11 @@ export const FavoriteMovies = ({ movies, title, isFavoriteMovie }) => {
                 <Card>
                     <Card.Header><h2>Favorites</h2></Card.Header>
                     <Card.Body>
-                        {isFav.length > 0 ? (
-                            isFav.map((movie) => (
-                                    <Card.Text>{movie.title} </Card.Text>
-                                    
+                        {favoriteMovies.length > 0 ? (
+                            favoriteMovies.map((movie) => (
+                                <Card.Text key={movie.id}>
+                                    {movie.title}
+                                </Card.Text>
                             ))
                         ) : (
                             <Card.Text>No favorites found</Card.Text>
@@ -42,8 +42,13 @@ export const FavoriteMovies = ({ movies, title, isFavoriteMovie }) => {
 };
 
 
-
 FavoriteMovies.propTypes = {
-    movies: PropTypes.string.isRequired,
-    // favorite: PropTypes.bool.isRequired,
-  };
+    movies: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            title: PropTypes.string.isRequired,
+            // Add other movie properties if necessary
+        })
+    ).isRequired,
+    isFavoriteMovie: PropTypes.arrayOf(PropTypes.string).isRequired, // List of favorite movie IDs
+};
