@@ -43382,7 +43382,7 @@ FavoriteMovies.propTypes = {
         id: (0, _propTypesDefault.default).string.isRequired,
         title: (0, _propTypesDefault.default).string.isRequired
     })).isRequired,
-    isFavoriteMovie: (0, _propTypesDefault.default).arrayOf((0, _propTypesDefault.default).string).isRequired
+    isFavoriteMovie: (0, _propTypesDefault.default).arrayOf((0, _propTypesDefault.default).string)
 };
 var _c;
 $RefreshReg$(_c, "FavoriteMovies");

@@ -50,5 +50,5 @@ FavoriteMovies.propTypes = {
             // Add other movie properties if necessary
         })
     ).isRequired,
-    isFavoriteMovie: PropTypes.arrayOf(PropTypes.string).isRequired, // List of favorite movie IDs
+    isFavoriteMovie: PropTypes.arrayOf(PropTypes.string)
 };
