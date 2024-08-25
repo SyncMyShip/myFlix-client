@@ -1,6 +1,6 @@
 
 import{ useState } from "react";
-import Button from "react-bootstrap/Button";
+import { Button, Col } from "react-bootstrap";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
