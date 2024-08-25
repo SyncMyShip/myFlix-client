@@ -1,6 +1,6 @@
 
 import{ useState } from "react";
-import Button from "react-bootstrap/Button";
+import { Button, Col } from "react-bootstrap";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -33,14 +33,16 @@ export const DeleteUser = ({ username, token, onLoggedOut }) => {
     };
 
     return (
-        <div>
-            <Button
-                variant="danger"
-                onClick={deleteHandler}
-                disabled={isDeleting}
-            >
-                {isDeleting ? 'Deleting user...' : 'Delete User'}
-            </Button>
-        </div>
+        <Col className="mb-3">
+            <div>
+                <Button
+                    variant="danger"
+                    onClick={deleteHandler}
+                    disabled={isDeleting}
+                >
+                    {isDeleting ? 'Deleting user...' : 'Delete User'}
+                </Button>
+            </div>
+        </Col>
     )
 }

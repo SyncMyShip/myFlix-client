@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 
 
 export const UserProfile = () => {
-    
     const user = JSON.parse(localStorage.getItem("user"));
     const name = useState(user?.Name);
     const username = useState(user?.Username);
