@@ -5,10 +5,10 @@ import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
 import { ProfileView } from "../profile-view/profile-view";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
-import Row from "react-bootstrap/Row";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
+import { Row, Col } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setMovies } from "../../state/movies/moviesSlice";
 
 export const MainView = ( ) => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
