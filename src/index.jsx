@@ -1,6 +1,8 @@
 import { createRoot } from 'react-dom/client';
 import { MainView } from './components/main-view/main-view';
 import Container from "react-bootstrap/Container";
+import { store } from "./redux/store";
+import { Provider } from "react-redux";
 
 // import statement to indicate that ./index.scss needs to be bundled
 import "./index.scss";
@@ -9,9 +11,11 @@ import "./index.scss";
 // main component 
 const App = () => {
     return (
-        <Container>
-            <MainView />
-        </Container>
+        <Provider store={store}>
+            <Container>
+                <MainView />
+            </Container>
+        </Provider>
     )
 };
 
