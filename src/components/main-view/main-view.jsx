@@ -11,12 +11,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { setMovies } from "../../state/movies/moviesSlice";
 
 export const MainView = ( ) => {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const storedToken = localStorage.getItem("token");
   const movies = useSelector((state) => state.movies);
+  const { user, token } = useSelector((state) => state.user)
   // const [movies, setMovies] = useState([]);
-  const [user, setUser] = useState(storedUser ? storedUser : null);
-  const [token, setToken] = useState(storedToken ? storedToken : null);
+  // const [user, setUser] = useState(storedUser ? storedUser : null);
+  // const [token, setToken] = useState(storedToken ? storedToken : null);
 
   const dispatch = useDispatch();
 
@@ -42,21 +41,14 @@ export const MainView = ( ) => {
       });
   }, [token]);
 
-  const syncUser = (user) => {
-    localStorage.setItem("user", JSON.stringify(user));
-      setUser(user);
-  }
+  // const syncUser = (user) => {
+  //   localStorage.setItem("user", JSON.stringify(user));
+  //     setUser(user);
+  // }
 
   return (
     <BrowserRouter>
-      <NavigationBar
-        user={user}
-        onLoggedOut={() => {
-          setUser(null);
-          setToken(null);
-          localStorage.clear();
-        }}
-      />
+      <NavigationBar/>
       <Row className="justify-content-md-center">
         <Routes>
           <Route
@@ -81,12 +73,7 @@ export const MainView = ( ) => {
                   <Navigate to="/" />
                 ) : (
                   <Col md={6} style={{ padding: "50px" }}>
-                    <LoginView
-                      onLoggedIn={(user, token) => {
-                        setUser(user);
-                        setToken(token);
-                      }}
-                    />
+                    <LoginView/>
                   </Col>
                 )}
               </>
@@ -101,10 +88,10 @@ export const MainView = ( ) => {
                 ) : (
                   <Col style={{ padding: "50px" }}>
                     <ProfileView 
-                      user={user} 
-                      token={token} 
-                      movies={movies} 
-                      syncUser={syncUser}
+                      // user={user} 
+                      // token={token} 
+                      // movies={movies} 
+                      // syncUser={syncUser}
                     />
                   </Col>
                 )}
@@ -123,8 +110,8 @@ export const MainView = ( ) => {
                   <Col md={6} style={{ padding: "50px" }}>
                     <MovieView
                       // movies={movies}
-                      token={token}
-                      syncUser={syncUser}
+                      // token={token}
+                      // syncUser={syncUser}
                     />
                   </Col>
                 )}

@@ -2,19 +2,21 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import { Row, Col, Card } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
 
 
-export const FavoriteMovies = ({ movies }) => {
+export const FavoriteMovies = ({}) => {
     const [favoriteMovies, setFavoriteMovies] = useState([]);
-    const user = JSON.parse(localStorage.getItem("user"));
+    const { movies } = useSelector((state) => state.movies)
+    const dispatch = useDispatch();
 
     // Set favorite movies when the component mounts or when `movies` updates
     useEffect(() => {
         if (movies && Array.isArray(movies)) {
                 const isFavoriteMovie = user.FavoriteMovies;
                 const favorites = movies.filter((movie) => isFavoriteMovie.includes(movie.id));
-                setFavoriteMovies(favorites);
-            setFavoriteMovies(favorites);
+                dispatch(setFavoriteMovies(favorites));
+            dispatch(setFavoriteMovies(favorites));
         }
     }, [movies]);
 

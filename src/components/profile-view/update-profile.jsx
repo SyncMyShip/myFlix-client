@@ -3,16 +3,19 @@ import{ useState, useEffect } from "react";
 import { Row, Col, Card, Button, Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../../state/users/usersSlice";
 
-export const UpdateProfile = ({ token, syncUser }) => {
-    const [userData, setUserData] = useState(() => JSON.parse(localStorage.getItem("user")));
+export const UpdateProfile = ({}) => {
+    // const [userData, setUserData] = useState(() => JSON.parse(localStorage.getItem("user")));
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    const { user, token } = useSelector((state) => state.user)
     const [name, setName] = useState(user?.Name || "");
     const [username, setUsername] = useState(user?.Username || "");
     const [email, setEmail] = useState(user?.Email || "");
     const [birthday, setBirthday] = useState(user?.DateOfBirth || "");
     const [isValid, setIsValid] = useState(false);
+    const dispatch = useDispatch();
 
     useEffect(() => {
 
@@ -20,11 +23,11 @@ export const UpdateProfile = ({ token, syncUser }) => {
         setIsValid(isFormValid);
     }, [name, username, email, birthday]);
 
-    const handleStorageChange = (event) => {
-        if (event.key === "user") {
-          setUserData(JSON.parse(localStorage.getItem("user")));
-        }
-      };
+    // const handleStorageChange = (event) => {
+    //     if (event.key === "user") {
+    //       setUserData(JSON.parse(localStorage.getItem("user")));
+    //     }
+    //   };
 
 
         const handleSubmit = async (event) => {
@@ -50,9 +53,9 @@ export const UpdateProfile = ({ token, syncUser }) => {
 
                 if (response.ok) {
                     const data = await response.json();
-                    syncUser(data);
+                    dispatch(setUser(user))
                     // Add the storage event listener
-                    window.addEventListener("storage", handleStorageChange);
+                    // window.addEventListener("storage", handleStorageChange);
                     alert("User successfully updated");
                 } else {
                     const errData = await response.json()
