@@ -13,9 +13,12 @@ import { setMovies } from "../../state/movies/moviesSlice";
 export const MainView = ( ) => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const storedToken = localStorage.getItem("token");
-  const [movies, setMovies] = useState([]);
+  const movies = useSelector((state) => state.movies);
+  // const [movies, setMovies] = useState([]);
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!token) return;
@@ -24,18 +27,18 @@ export const MainView = ( ) => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => response.json())
-      .then((movies) => {
-        const moviesFromApi = movies.map((movie) => {
+      .then((data) => {
+        const moviesFromApi = data.map((movie) => {
           return {
             id: movie._id,
             title: movie.Title,
             image: movie.ImagePath,
             description: movie.Description,
-            genre: movie.Genre["Name"],
-            director: movie.Director["Name"],
+            genre: movie.Genre?.[0],
+            director: movie.Director?.[0],
           };
         });
-        setMovies(moviesFromApi);
+        dispatch(setMovies(moviesFromApi));
       });
   }, [token]);
 
@@ -119,7 +122,7 @@ export const MainView = ( ) => {
                 ) : (
                   <Col md={6} style={{ padding: "50px" }}>
                     <MovieView
-                      movies={movies}
+                      // movies={movies}
                       token={token}
                       syncUser={syncUser}
                     />

@@ -6,9 +6,11 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 
-export const MovieView = ({ token, movies, syncUser }) => {
+export const MovieView = ({ token, syncUser }) => {
+    const movies = useSelector((state) => state.movies);
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
     const user = JSON.parse(localStorage.getItem("user"));
