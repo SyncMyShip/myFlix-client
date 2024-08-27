@@ -5,21 +5,19 @@ import { UpdateProfile } from "./update-profile";
 import { DeleteUser } from "./delete-user";
 import { FavoriteMovies } from "./favorites-view";
 import { useNavigate } from "react-router";
-import { useSelector, useDispatch } from "react-redux";
 
 
-export const ProfileView = ({ syncUser, isFavoriteMovie, handleFavorites }) => {
+export const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFavorites }) => {
     const navigate = useNavigate();
-    const { user, token } = useSelector((state) => state.user);
-    const movies = useSelector((state) => state.movies);
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    
+
+
     return (
         <Row className="justify-content-center">
             <Col md={10} className="align-items-stretch" style={{ padding: "50px" }}>
                 <div>
                     <UserProfile
-                        user={user}
                         name={user.Name}
                         username={user.Username}
                         email={user.Email}
@@ -35,7 +33,7 @@ export const ProfileView = ({ syncUser, isFavoriteMovie, handleFavorites }) => {
                         email={user.Email}
                         birthday={user.DateOfBirth}
                         token={token}
-                        // syncUser={syncUser}
+                        syncUser={syncUser}
                     /> 
                 </div>
                 <div>
