@@ -43,10 +43,10 @@ export const MainView = ( ) => {
       });
   }, [token]);
 
-  const syncUser = (user) => {
-    localStorage.setItem("user", JSON.stringify(user));
-      setUser(user);
-  }
+  // const syncUser = (user) => {
+  //   localStorage.setItem("user", JSON.stringify(user));
+  //     setUser(user);
+  // }
 
   return (
     <BrowserRouter>
@@ -93,7 +93,7 @@ export const MainView = ( ) => {
                       user={user} 
                       token={token} 
                       movies={movies} 
-                      syncUser={syncUser}
+                      // syncUser={syncUser}
                     />
                   </Col>
                 )}
@@ -112,8 +112,8 @@ export const MainView = ( ) => {
                   <Col md={6} style={{ padding: "50px" }}>
                     <MovieView
                       // movies={movies}
-                      token={token}
-                      syncUser={syncUser}
+                      // token={token}
+                      // syncUser={syncUser}
                     />
                   </Col>
                 )}

@@ -9,11 +9,12 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 
-export const MovieView = ({ token, syncUser }) => {
+export const MovieView = () => {
     const movies = useSelector((state) => state.movies);
+    const { user, token } = useSelector((state) => state.user)
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
-    const user = JSON.parse(localStorage.getItem("user"));
+    // const user = JSON.parse(localStorage.getItem("user"));
     
     let isFavoriteMovie = user.FavoriteMovies.includes(movie.id)
     // let isFavoriteMovie = user.FavoriteMovies
@@ -34,7 +35,7 @@ export const MovieView = ({ token, syncUser }) => {
   
         if (response.ok) {
           const data = await response.json();
-          syncUser(data);
+          // syncUser(data);
   
           const status = isFavoriteMovie ? "removed from" : "added to";
           alert(`Movie ${status} Favorites`);
