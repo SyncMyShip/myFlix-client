@@ -18,9 +18,6 @@ export const MovieView = ({ syncUser }) => {
     const dispatch = useDispatch();
 
     const isFavoriteMovie = user?.FavoriteMovies?.includes(movie?.id) || false;
-    // let isFavoriteMovie = user.FavoriteMovies
-    // isFavoriteMovie ? true : false
-    console.log(user.FavoriteMovies)
   
     const handleFavorites = async () => {
       const method = isFavoriteMovie ? "DELETE" : "POST";

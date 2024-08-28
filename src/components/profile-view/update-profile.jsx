@@ -10,8 +10,7 @@ export const UpdateProfile = ({ token }) => {
     const [name, setName] = useState(user?.Name || "");
     const [username, setUsername] = useState(user?.Username || "");
     const [email, setEmail] = useState(user?.Email || "");
-    const [birthday, setBirthday] = useState(user?.DateOfBirth?.split('T')[0] || ""); // Handling date format
-    const [isValid, setIsValid] = useState(false);
+    const [birthday, setBirthday] = useState(user?.DateOfBirth?.split('T')[0] || "");
 
     useEffect(() => {
         // Form is valid if all fields have values

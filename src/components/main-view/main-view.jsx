@@ -12,13 +12,9 @@ import { setMovies } from "../../state/movies/moviesSlice";
 import { setUser } from "../../state/users/usersSlice";
 
 export const MainView = ( ) => {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const storedToken = localStorage.getItem("token");
   const movies = useSelector((state) => state.movies);
   const { user, token } = useSelector((state) => state.user);
-  // const [movies, setMovies] = useState([]);
-  // const [user, setUser] = useState(storedUser ? storedUser : null);
-  // const [token, setToken] = useState(storedToken ? storedToken : null);
+
 
   const dispatch = useDispatch();
 
@@ -92,8 +88,6 @@ export const MainView = ( ) => {
                     <ProfileView 
                       user={user} 
                       token={token} 
-                      // movies={movies} 
-                      // syncUser={syncUser}
                     />
                   </Col>
                 )}
@@ -110,11 +104,7 @@ export const MainView = ( ) => {
                   <Col>The list is empty!</Col>
                 ) : (
                   <Col md={6} style={{ padding: "50px" }}>
-                    <MovieView
-                      // movies={movies}
-                      // token={token}
-                      syncUser={syncUser}
-                    />
+                    <MovieView/>
                   </Col>
                 )}
               </>

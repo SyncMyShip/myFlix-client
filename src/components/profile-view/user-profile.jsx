@@ -6,13 +6,12 @@ import { useSelector } from "react-redux";
 
 export const UserProfile = () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    const movies = useSelector((state) => state.movies); // Fetch movies from Redux state
-    const [name] = useState(user?.Name); // Correct useState syntax
+    const movies = useSelector((state) => state.movies); 
+    const [name] = useState(user?.Name); 
     const [username] = useState(user?.Username);
     const [email] = useState(user?.Email);
     const [birthday] = useState(user?.DateOfBirth ? new Date(user?.DateOfBirth) : ""); // Ensure birthday is a valid date object
 
-    // Format the birthday if available
     const formattedBirthday = birthday
         ? birthday.toISOString().split('T')[0].replace(/-/g, '-')
         : "No birthday available";
