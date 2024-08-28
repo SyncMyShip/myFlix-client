@@ -1,67 +1,58 @@
-
-import{ useState, useEffect } from "react";
-import { Row, Col, Card, Button, Container } from "react-bootstrap";
-import Form from "react-bootstrap/Form";
+import { useState, useEffect } from "react";
+import { Row, Col, Card, Button, Form } from "react-bootstrap";
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../../state/users/usersSlice";
 
-export const UpdateProfile = ({ token, syncUser }) => {
-    const [userData, setUserData] = useState(() => JSON.parse(localStorage.getItem("user")));
-
-    const user = JSON.parse(localStorage.getItem("user"));
+export const UpdateProfile = ({ token }) => {
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user.user);
     const [name, setName] = useState(user?.Name || "");
     const [username, setUsername] = useState(user?.Username || "");
     const [email, setEmail] = useState(user?.Email || "");
-    const [birthday, setBirthday] = useState(user?.DateOfBirth || "");
+    const [birthday, setBirthday] = useState(user?.DateOfBirth?.split('T')[0] || ""); // Handling date format
     const [isValid, setIsValid] = useState(false);
 
     useEffect(() => {
-
-        const isFormValid = name || username || email || birthday;
+        // Form is valid if all fields have values
+        const isFormValid = name && username && email && birthday;
         setIsValid(isFormValid);
     }, [name, username, email, birthday]);
 
-    const handleStorageChange = (event) => {
-        if (event.key === "user") {
-          setUserData(JSON.parse(localStorage.getItem("user")));
-        }
-      };
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-
-        const handleSubmit = async (event) => {
-                event.preventDefault();
-
-            const originalUsername = user.Username;
-
-            try {
+        const originalUsername = user?.Username; 
+        try {
             const response = await fetch(`https://reelrendezvous-0ea25cfde7d6.herokuapp.com/users/${originalUsername}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     Name: name,
                     Username: username,
                     Email: email,
-                    DateOfBirth: birthday
-                })
+                    DateOfBirth: birthday,
+                }),
             });
-        
 
-                if (response.ok) {
-                    const data = await response.json();
-                    syncUser(data);
-                    // Add the storage event listener
-                    window.addEventListener("storage", handleStorageChange);
-                    alert("User successfully updated");
-                } else {
-                    const errData = await response.json()
-                    console.error("Update failed:", errData)
-                    alert("Failed to update user");
-                }
-            } catch (err) {
-                    console.error("Error updating user:", err);
-                }
+            if (response.ok) {
+                const updatedUser = await response.json();
+                dispatch(setUser(updatedUser)); 
+                localStorage.setItem("user", JSON.stringify(updatedUser)); 
+                alert("User successfully updated");
+                location.reload();
+            } else {
+                const errData = await response.json();
+                console.error("Update failed:", errData);
+                alert("Failed to update user");
+            }
+        } catch (err) {
+            console.error("Error updating user:", err);
+            alert("An error occurred during the update.");
+        }
     };
 
     return (
@@ -72,7 +63,7 @@ export const UpdateProfile = ({ token, syncUser }) => {
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formName">
                             <Form.Label>Name:</Form.Label>
-                        <Form.Control 
+                            <Form.Control
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -81,7 +72,7 @@ export const UpdateProfile = ({ token, syncUser }) => {
 
                         <Form.Group className="mb-3" controlId="formUsername">
                             <Form.Label>Username:</Form.Label>
-                        <Form.Control 
+                            <Form.Control
                                 type="text"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
@@ -91,7 +82,7 @@ export const UpdateProfile = ({ token, syncUser }) => {
 
                         <Form.Group className="mb-3" controlId="formEmail">
                             <Form.Label>Email:</Form.Label>
-                        <Form.Control 
+                            <Form.Control
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -100,14 +91,15 @@ export const UpdateProfile = ({ token, syncUser }) => {
 
                         <Form.Group className="mb-3" controlId="formBirthday">
                             <Form.Label>Date of Birth:</Form.Label>
-                        <Form.Control 
+                            <Form.Control
                                 type="date"
                                 value={birthday}
                                 onChange={(e) => setBirthday(e.target.value)}
                             />
                         </Form.Group>
-                        <Button 
-                            variant="primary" 
+
+                        <Button
+                            variant="primary"
                             type="submit"
                             disabled={!isValid}
                         >
@@ -118,4 +110,4 @@ export const UpdateProfile = ({ token, syncUser }) => {
             </Col>
         </Row>
     );
-}
+};

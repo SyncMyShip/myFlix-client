@@ -36,7 +36,7 @@ export const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, ha
                         email={user.Email}
                         birthday={user.DateOfBirth}
                         token={token}
-                        syncUser={syncUser}
+                        // syncUser={syncUser}
                     /> 
                 </div>
                 {/* <div>
