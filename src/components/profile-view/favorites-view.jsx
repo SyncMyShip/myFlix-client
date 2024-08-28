@@ -2,21 +2,27 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import { Row, Col, Card } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 
 export const FavoriteMovies = ({ movies }) => {
     const [favoriteMovies, setFavoriteMovies] = useState([]);
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = useSelector((state) => state.user);
 
     // Set favorite movies when the component mounts or when `movies` updates
     useEffect(() => {
-        if (movies && Array.isArray(movies)) {
-                const isFavoriteMovie = user.FavoriteMovies;
-                const favorites = movies.filter((movie) => isFavoriteMovie.includes(movie.id));
-                setFavoriteMovies(favorites);
+        // if (movies && Array.isArray(movies)) {
+        //     const isFavoriteMovie = user?.FavoriteMovies || [];
+        //     const favorites = movies.filter((movie) => isFavoriteMovie.includes(movie.id));
+        //     setFavoriteMovies(favorites);
+        // }
+        if (movies && Array.isArray(movies) && user?.FavoriteMovies) {
+            const favorites = movies.filter((movie) =>
+            user.FavoriteMovies.includes(movie.id)
+            );
             setFavoriteMovies(favorites);
         }
-    }, [movies]);
+    }, [movies, user]);
 
 
     return (
@@ -50,5 +56,5 @@ FavoriteMovies.propTypes = {
             // Add other movie properties if necessary
         })
     ).isRequired,
-    isFavoriteMovie: PropTypes.arrayOf(PropTypes.string)
+    // isFavoriteMovie: PropTypes.arrayOf(PropTypes.string)
 };

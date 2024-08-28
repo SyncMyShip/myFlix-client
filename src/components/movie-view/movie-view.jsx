@@ -6,19 +6,21 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../../state/users/usersSlice";
 
 
-export const MovieView = () => {
+export const MovieView = ({ syncUser }) => {
     const movies = useSelector((state) => state.movies);
-    const { user, token } = useSelector((state) => state.user)
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
-    // const user = JSON.parse(localStorage.getItem("user"));
-    
-    let isFavoriteMovie = user.FavoriteMovies.includes(movie.id)
+    const { user, token } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+
+    const isFavoriteMovie = user?.FavoriteMovies?.includes(movie?.id) || false;
     // let isFavoriteMovie = user.FavoriteMovies
     // isFavoriteMovie ? true : false
+    console.log(user.FavoriteMovies)
   
     const handleFavorites = async () => {
       const method = isFavoriteMovie ? "DELETE" : "POST";
@@ -34,14 +36,13 @@ export const MovieView = () => {
         });
   
         if (response.ok) {
-          const data = await response.json();
-          // syncUser(data);
-  
+
+          const updatedUser = await response.json();
+          dispatch(setUser(updatedUser));
           const status = isFavoriteMovie ? "removed from" : "added to";
           alert(`Movie ${status} Favorites`);
         } else {
           const errData = await response.json();
-  
           console.error("Failed to update Favorites:", errData);
           alert("Failed to update Favorites");
         }

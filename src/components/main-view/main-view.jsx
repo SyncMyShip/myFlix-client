@@ -9,6 +9,7 @@ import { Row, Col } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setMovies } from "../../state/movies/moviesSlice";
+import { setUser } from "../../state/users/usersSlice";
 
 export const MainView = ( ) => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -35,18 +36,17 @@ export const MainView = ( ) => {
             title: movie.Title,
             image: movie.ImagePath,
             description: movie.Description,
-            genre: movie.Genre?.[0],
-            director: movie.Director?.[0],
+            genre: movie.Genre?.["Name"],
+            director: movie.Director?.["Name"],
           };
         });
         dispatch(setMovies(moviesFromApi));
       });
   }, [token]);
 
-  // const syncUser = (user) => {
-  //   localStorage.setItem("user", JSON.stringify(user));
-  //     setUser(user);
-  // }
+  const syncUser = (user) => {
+      setUser(user);
+  }
 
   return (
     <BrowserRouter>
@@ -113,7 +113,7 @@ export const MainView = ( ) => {
                     <MovieView
                       // movies={movies}
                       // token={token}
-                      // syncUser={syncUser}
+                      syncUser={syncUser}
                     />
                   </Col>
                 )}
