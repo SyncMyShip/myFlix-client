@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const storedUser = JSON.parse(localStorage.getItem("user"));
-const storedToken = localStorage.getItem("token");
+const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+const storedToken = localStorage.getItem("token") || null;
 
 const initialState = {
     user: storedUser ? storedUser : null,
@@ -22,6 +22,9 @@ const usersSlice = createSlice({
             localStorage.setItem("token", token)
             state.token = token;
         },
+        setFavoriteMovies: (state, action) => {
+            state.user.FavoriteMovies = action.payload;
+        },
         onLoggedOut: (state) => {
             state.user = null;
             state.token = null;
@@ -30,6 +33,6 @@ const usersSlice = createSlice({
     }
 });
 
-export const { setUser, setToken, onLoggedOut } = usersSlice.actions;
+export const { setUser, setToken, setFavoriteMovies, onLoggedOut } = usersSlice.actions;
 
 export default usersSlice.reducer;

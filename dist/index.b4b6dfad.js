@@ -27527,8 +27527,7 @@ const MainView = ()=>{
                                     },
                                     children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _profileView.ProfileView), {
                                         user: user,
-                                        token: token,
-                                        movies: movies
+                                        token: token
                                     }, void 0, false, {
                                         fileName: "src/components/main-view/main-view.jsx",
                                         lineNumber: 92,
@@ -42557,13 +42556,63 @@ const initializeUseSelector = (fn)=>{
 };
 const refEquality = (a, b)=>a === b;
 function createSelectorHook(context = (0, _context.ReactReduxContext)) {
-    const useReduxContext = context === (0, _context.ReactReduxContext) ? (0, _useReduxContext.useReduxContext) : ()=>(0, _react.useContext)(context);
-    return function useSelector(selector, equalityFn = refEquality) {
+    const useReduxContext = context === (0, _context.ReactReduxContext) ? (0, _useReduxContext.useReduxContext) : (0, _useReduxContext.createReduxContextHook)(context);
+    return function useSelector(selector, equalityFnOrOptions = {}) {
+        const { equalityFn = refEquality, stabilityCheck, noopCheck } = typeof equalityFnOrOptions === "function" ? {
+            equalityFn: equalityFnOrOptions
+        } : equalityFnOrOptions;
         if (!selector) throw new Error(`You must pass a selector to useSelector`);
         if (typeof selector !== "function") throw new Error(`You must pass a function as a selector to useSelector`);
         if (typeof equalityFn !== "function") throw new Error(`You must pass a function as an equality function to useSelector`);
-        const { store, subscription, getServerState } = useReduxContext();
-        const selectedState = useSyncExternalStoreWithSelector(subscription.addNestedSub, store.getState, getServerState || store.getState, selector, equalityFn);
+        const { store, subscription, getServerState, stabilityCheck: globalStabilityCheck, noopCheck: globalNoopCheck } = useReduxContext();
+        const firstRun = (0, _react.useRef)(true);
+        const wrappedSelector = (0, _react.useCallback)({
+            [selector.name] (state) {
+                const selected = selector(state);
+                {
+                    const finalStabilityCheck = typeof stabilityCheck === "undefined" ? globalStabilityCheck : stabilityCheck;
+                    if (finalStabilityCheck === "always" || finalStabilityCheck === "once" && firstRun.current) {
+                        const toCompare = selector(state);
+                        if (!equalityFn(selected, toCompare)) {
+                            let stack = undefined;
+                            try {
+                                throw new Error();
+                            } catch (e) {
+                                ({ stack } = e);
+                            }
+                            console.warn("Selector " + (selector.name || "unknown") + " returned a different result when called with the same parameters. This can lead to unnecessary rerenders." + "\nSelectors that return a new reference (such as an object or an array) should be memoized: https://redux.js.org/usage/deriving-data-selectors#optimizing-selectors-with-memoization", {
+                                state,
+                                selected,
+                                selected2: toCompare,
+                                stack
+                            });
+                        }
+                    }
+                    const finalNoopCheck = typeof noopCheck === "undefined" ? globalNoopCheck : noopCheck;
+                    if (finalNoopCheck === "always" || finalNoopCheck === "once" && firstRun.current) // @ts-ignore
+                    {
+                        if (selected === state) {
+                            let stack = undefined;
+                            try {
+                                throw new Error();
+                            } catch (e) {
+                                ({ stack } = e);
+                            }
+                            console.warn("Selector " + (selector.name || "unknown") + " returned the root state when called. This can lead to unnecessary rerenders." + "\nSelectors that return the entire state are almost certainly a mistake, as they will cause a rerender whenever *anything* in state changes.", {
+                                stack
+                            });
+                        }
+                    }
+                    if (firstRun.current) firstRun.current = false;
+                }
+                return selected;
+            }
+        }[selector.name], [
+            selector,
+            globalStabilityCheck,
+            stabilityCheck
+        ]);
+        const selectedState = useSyncExternalStoreWithSelector(subscription.addNestedSub, store.getState, getServerState || store.getState, wrappedSelector, equalityFn);
         (0, _react.useDebugValue)(selectedState);
         return selectedState;
     };
@@ -42574,37 +42623,44 @@ const useSelector = /*#__PURE__*/ createSelectorHook();
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
- * A hook to access the value of the `ReactReduxContext`. This is a low-level
+ * Hook factory, which creates a `useReduxContext` hook bound to a given context. This is a low-level
  * hook that you should usually not need to call directly.
  *
- * @returns {any} the value of the `ReactReduxContext`
- *
- * @example
- *
- * import React from 'react'
- * import { useReduxContext } from 'react-redux'
- *
- * export const CounterComponent = () => {
- *   const { store } = useReduxContext()
- *   return <div>{store.getState()}</div>
- * }
- */ parcelHelpers.export(exports, "useReduxContext", ()=>useReduxContext);
+ * @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
+ * @returns {Function} A `useReduxContext` hook bound to the specified context.
+ */ parcelHelpers.export(exports, "createReduxContextHook", ()=>createReduxContextHook);
+parcelHelpers.export(exports, "useReduxContext", ()=>useReduxContext);
 var _react = require("react");
 var _context = require("../components/Context");
-function useReduxContext() {
-    const contextValue = (0, _react.useContext)((0, _context.ReactReduxContext));
-    if (!contextValue) throw new Error("could not find react-redux context value; please ensure the component is wrapped in a <Provider>");
-    return contextValue;
+function createReduxContextHook(context = (0, _context.ReactReduxContext)) {
+    return function useReduxContext() {
+        const contextValue = (0, _react.useContext)(context);
+        if (!contextValue) throw new Error("could not find react-redux context value; please ensure the component is wrapped in a <Provider>");
+        return contextValue;
+    };
 }
+const useReduxContext = /*#__PURE__*/ createReduxContextHook();
 
 },{"react":"21dqq","../components/Context":"ji81o","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ji81o":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ReactReduxContext", ()=>ReactReduxContext);
 var _react = require("react");
-var _reactDefault = parcelHelpers.interopDefault(_react);
-const ReactReduxContext = /*#__PURE__*/ (0, _reactDefault.default).createContext(null);
-ReactReduxContext.displayName = "ReactRedux";
+const ContextKey = Symbol.for(`react-redux-context`);
+const gT = typeof globalThis !== "undefined" ? globalThis : /* fall back to a per-module scope (pre-8.1 behaviour) if `globalThis` is not available */ {};
+function getContext() {
+    var _gT$ContextKey;
+    if (!_react.createContext) return {};
+    const contextMap = (_gT$ContextKey = gT[ContextKey]) != null ? _gT$ContextKey : gT[ContextKey] = new Map();
+    let realContext = contextMap.get(_react.createContext);
+    if (!realContext) {
+        realContext = _react.createContext(null);
+        realContext.displayName = "ReactRedux";
+        contextMap.set(_react.createContext, realContext);
+    }
+    return realContext;
+}
+const ReactReduxContext = /*#__PURE__*/ getContext();
 exports.default = ReactReduxContext;
 
 },{"react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dSsKl":[function(require,module,exports) {
@@ -42626,7 +42682,6 @@ var _objectWithoutPropertiesLooseDefault = parcelHelpers.interopDefault(_objectW
 /* eslint-disable valid-jsdoc, @typescript-eslint/no-unused-vars */ var _hoistNonReactStatics = require("hoist-non-react-statics");
 var _hoistNonReactStaticsDefault = parcelHelpers.interopDefault(_hoistNonReactStatics);
 var _react = require("react");
-var _reactDefault = parcelHelpers.interopDefault(_react);
 var _reactIs = require("react-is");
 var _selectorFactory = require("../connect/selectorFactory");
 var _selectorFactoryDefault = parcelHelpers.interopDefault(_selectorFactory);
@@ -42794,7 +42849,7 @@ context = (0, _context.ReactReduxContext) } = {}) {
             areMergedPropsEqual
         };
         function ConnectFunction(props) {
-            const [propsContext, reactReduxForwardedRef, wrapperProps] = (0, _react.useMemo)(()=>{
+            const [propsContext, reactReduxForwardedRef, wrapperProps] = _react.useMemo(()=>{
                 // Distinguish between actual "data" props that were passed to the wrapper component,
                 // and values needed to control behavior (forwarded refs, alternate context instances).
                 // To maintain the wrapperProps object reference, memoize this destructuring.
@@ -42807,16 +42862,16 @@ context = (0, _context.ReactReduxContext) } = {}) {
             }, [
                 props
             ]);
-            const ContextToUse = (0, _react.useMemo)(()=>{
+            const ContextToUse = _react.useMemo(()=>{
                 // Users may optionally pass in a custom context instance to use instead of our ReactReduxContext.
                 // Memoize the check that determines which context instance we should use.
                 return propsContext && propsContext.Consumer && // @ts-ignore
-                (0, _reactIs.isContextConsumer)(/*#__PURE__*/ (0, _reactDefault.default).createElement(propsContext.Consumer, null)) ? propsContext : Context;
+                (0, _reactIs.isContextConsumer)(/*#__PURE__*/ _react.createElement(propsContext.Consumer, null)) ? propsContext : Context;
             }, [
                 propsContext,
                 Context
             ]); // Retrieve the store and ancestor subscription via context, if available
-            const contextValue = (0, _react.useContext)(ContextToUse); // The store _must_ exist as either a prop or in context.
+            const contextValue = _react.useContext(ContextToUse); // The store _must_ exist as either a prop or in context.
             // We'll check to see if it _looks_ like a Redux store first.
             // This allows us to pass through a `store` prop that is just a plain value.
             const didStoreComeFromProps = Boolean(props.store) && Boolean(props.store.getState) && Boolean(props.store.dispatch);
@@ -42825,14 +42880,14 @@ context = (0, _context.ReactReduxContext) } = {}) {
              // Based on the previous check, one of these must be true
             const store = didStoreComeFromProps ? props.store : contextValue.store;
             const getServerState = didStoreComeFromContext ? contextValue.getServerState : store.getState;
-            const childPropsSelector = (0, _react.useMemo)(()=>{
+            const childPropsSelector = _react.useMemo(()=>{
                 // The child props selector needs the store reference as an input.
                 // Re-create this selector whenever the store changes.
                 return (0, _selectorFactoryDefault.default)(store.dispatch, selectorFactoryOptions);
             }, [
                 store
             ]);
-            const [subscription, notifyNestedSubs] = (0, _react.useMemo)(()=>{
+            const [subscription, notifyNestedSubs] = _react.useMemo(()=>{
                 if (!shouldHandleStateChanges) return NO_SUBSCRIPTION_ARRAY; // This Subscription's source should match where store came from: props vs. context. A component
                 // connected to the store via props shouldn't use subscription from context, or vice versa.
                 const subscription = (0, _subscription.createSubscription)(store, didStoreComeFromProps ? undefined : contextValue.subscription); // `notifyNestedSubs` is duplicated to handle the case where the component is unmounted in
@@ -42850,7 +42905,7 @@ context = (0, _context.ReactReduxContext) } = {}) {
                 contextValue
             ]); // Determine what {store, subscription} value should be put into nested context, if necessary,
             // and memoize that value to avoid unnecessary context updates.
-            const overriddenContextValue = (0, _react.useMemo)(()=>{
+            const overriddenContextValue = _react.useMemo(()=>{
                 if (didStoreComeFromProps) // This component is directly subscribed to a store from props.
                 // We don't want descendants reading from this store - pass down whatever
                 // the existing context value is from the nearest connected ancestor.
@@ -42865,20 +42920,20 @@ context = (0, _context.ReactReduxContext) } = {}) {
                 contextValue,
                 subscription
             ]); // Set up refs to coordinate values between the subscription effect and the render logic
-            const lastChildProps = (0, _react.useRef)();
-            const lastWrapperProps = (0, _react.useRef)(wrapperProps);
-            const childPropsFromStoreUpdate = (0, _react.useRef)();
-            const renderIsScheduled = (0, _react.useRef)(false);
-            const isProcessingDispatch = (0, _react.useRef)(false);
-            const isMounted = (0, _react.useRef)(false);
-            const latestSubscriptionCallbackError = (0, _react.useRef)();
+            const lastChildProps = _react.useRef();
+            const lastWrapperProps = _react.useRef(wrapperProps);
+            const childPropsFromStoreUpdate = _react.useRef();
+            const renderIsScheduled = _react.useRef(false);
+            const isProcessingDispatch = _react.useRef(false);
+            const isMounted = _react.useRef(false);
+            const latestSubscriptionCallbackError = _react.useRef();
             (0, _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect)(()=>{
                 isMounted.current = true;
                 return ()=>{
                     isMounted.current = false;
                 };
             }, []);
-            const actualChildPropsSelector = (0, _react.useMemo)(()=>{
+            const actualChildPropsSelector = _react.useMemo(()=>{
                 const selector = ()=>{
                     // Tricky logic here:
                     // - This render may have been triggered by a Redux store update that produced new child props
@@ -42900,7 +42955,7 @@ context = (0, _context.ReactReduxContext) } = {}) {
             ]); // We need this to execute synchronously every time we re-render. However, React warns
             // about useLayoutEffect in SSR, so we try to detect environment and fall back to
             // just useEffect instead to avoid the warning, since neither will run anyway.
-            const subscribeForReact = (0, _react.useMemo)(()=>{
+            const subscribeForReact = _react.useMemo(()=>{
                 const subscribe = (reactListener)=>{
                     if (!subscription) return ()=>{};
                     return subscribeUpdates(shouldHandleStateChanges, store, subscription, childPropsSelector, lastWrapperProps, lastChildProps, renderIsScheduled, isMounted, childPropsFromStoreUpdate, notifyNestedSubs, reactListener);
@@ -42931,9 +42986,9 @@ context = (0, _context.ReactReduxContext) } = {}) {
                 lastChildProps.current = actualChildProps;
             }); // Now that all that's done, we can finally try to actually render the child component.
             // We memoize the elements for the rendered child component as an optimization.
-            const renderedWrappedComponent = (0, _react.useMemo)(()=>{
+            const renderedWrappedComponent = _react.useMemo(()=>{
                 return(/*#__PURE__*/ // @ts-ignore
-                (0, _reactDefault.default).createElement(WrappedComponent, (0, _extendsDefault.default)({}, actualChildProps, {
+                _react.createElement(WrappedComponent, (0, _extendsDefault.default)({}, actualChildProps, {
                     ref: reactReduxForwardedRef
                 })));
             }, [
@@ -42942,11 +42997,11 @@ context = (0, _context.ReactReduxContext) } = {}) {
                 actualChildProps
             ]); // If React sees the exact same element reference as last time, it bails out of re-rendering
             // that child, same as if it was wrapped in React.memo() or returned false from shouldComponentUpdate.
-            const renderedChild = (0, _react.useMemo)(()=>{
+            const renderedChild = _react.useMemo(()=>{
                 if (shouldHandleStateChanges) // If this component is subscribed to store updates, we need to pass its own
                 // subscription instance down to our descendants. That means rendering the same
                 // Context instance, and putting a different value into the context.
-                return /*#__PURE__*/ (0, _reactDefault.default).createElement(ContextToUse.Provider, {
+                return /*#__PURE__*/ _react.createElement(ContextToUse.Provider, {
                     value: overriddenContextValue
                 }, renderedWrappedComponent);
                 return renderedWrappedComponent;
@@ -42957,15 +43012,15 @@ context = (0, _context.ReactReduxContext) } = {}) {
             ]);
             return renderedChild;
         }
-        const _Connect = (0, _reactDefault.default).memo(ConnectFunction);
+        const _Connect = _react.memo(ConnectFunction);
         // Add a hacky cast to get the right output type
         const Connect = _Connect;
         Connect.WrappedComponent = WrappedComponent;
         Connect.displayName = ConnectFunction.displayName = displayName;
         if (forwardRef) {
-            const _forwarded = (0, _reactDefault.default).forwardRef(function forwardConnectRef(props, ref) {
+            const _forwarded = _react.forwardRef(function forwardConnectRef(props, ref) {
                 // @ts-ignore
-                return /*#__PURE__*/ (0, _reactDefault.default).createElement(Connect, (0, _extendsDefault.default)({}, props, {
+                return /*#__PURE__*/ _react.createElement(Connect, (0, _extendsDefault.default)({}, props, {
                     reactReduxForwardedRef: ref
                 }));
             });
@@ -43299,7 +43354,7 @@ function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, merg
     }
     function handleSubsequentCalls(nextState, nextOwnProps) {
         const propsChanged = !areOwnPropsEqual(nextOwnProps, ownProps);
-        const stateChanged = !areStatesEqual(nextState, state);
+        const stateChanged = !areStatesEqual(nextState, state, nextOwnProps, ownProps);
         state = nextState;
         ownProps = nextOwnProps;
         if (propsChanged && stateChanged) return handleNewPropsAndNewState();
@@ -43595,10 +43650,20 @@ const nullListeners = {
 };
 function createSubscription(store, parentSub) {
     let unsubscribe;
-    let listeners = nullListeners;
+    let listeners = nullListeners; // Reasons to keep the subscription active
+    let subscriptionsAmount = 0; // Is this specific subscription subscribed (or only nested ones?)
+    let selfSubscribed = false;
     function addNestedSub(listener) {
         trySubscribe();
-        return listeners.subscribe(listener);
+        const cleanupListener = listeners.subscribe(listener); // cleanup nested sub
+        let removed = false;
+        return ()=>{
+            if (!removed) {
+                removed = true;
+                cleanupListener();
+                tryUnsubscribe();
+            }
+        };
     }
     function notifyNestedSubs() {
         listeners.notify();
@@ -43607,20 +43672,34 @@ function createSubscription(store, parentSub) {
         if (subscription.onStateChange) subscription.onStateChange();
     }
     function isSubscribed() {
-        return Boolean(unsubscribe);
+        return selfSubscribed;
     }
     function trySubscribe() {
+        subscriptionsAmount++;
         if (!unsubscribe) {
             unsubscribe = parentSub ? parentSub.addNestedSub(handleChangeWrapper) : store.subscribe(handleChangeWrapper);
             listeners = createListenerCollection();
         }
     }
     function tryUnsubscribe() {
-        if (unsubscribe) {
+        subscriptionsAmount--;
+        if (unsubscribe && subscriptionsAmount === 0) {
             unsubscribe();
             unsubscribe = undefined;
             listeners.clear();
             listeners = nullListeners;
+        }
+    }
+    function trySubscribeSelf() {
+        if (!selfSubscribed) {
+            selfSubscribed = true;
+            trySubscribe();
+        }
+    }
+    function tryUnsubscribeSelf() {
+        if (selfSubscribed) {
+            selfSubscribed = false;
+            tryUnsubscribe();
         }
     }
     const subscription = {
@@ -43628,8 +43707,8 @@ function createSubscription(store, parentSub) {
         notifyNestedSubs,
         handleChangeWrapper,
         isSubscribed,
-        trySubscribe,
-        tryUnsubscribe,
+        trySubscribe: trySubscribeSelf,
+        tryUnsubscribe: tryUnsubscribeSelf,
         getListeners: ()=>listeners
     };
     return subscription;
@@ -43642,7 +43721,7 @@ parcelHelpers.export(exports, "canUseDOM", ()=>canUseDOM);
 parcelHelpers.export(exports, "useIsomorphicLayoutEffect", ()=>useIsomorphicLayoutEffect);
 var _react = require("react"); // React currently throws a warning when using useLayoutEffect on the server.
 const canUseDOM = !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined");
-const useIsomorphicLayoutEffect = canUseDOM ? (0, _react.useLayoutEffect) : (0, _react.useEffect);
+const useIsomorphicLayoutEffect = canUseDOM ? _react.useLayoutEffect : _react.useEffect;
 
 },{"react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gV5L4":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -43694,23 +43773,26 @@ parcelHelpers.exportAll(_types, exports);
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _react = require("react");
-var _reactDefault = parcelHelpers.interopDefault(_react);
 var _context = require("./Context");
 var _subscription = require("../utils/Subscription");
 var _useIsomorphicLayoutEffect = require("../utils/useIsomorphicLayoutEffect");
-function Provider({ store, context, children, serverState }) {
-    const contextValue = (0, _react.useMemo)(()=>{
+function Provider({ store, context, children, serverState, stabilityCheck = "once", noopCheck = "once" }) {
+    const contextValue = _react.useMemo(()=>{
         const subscription = (0, _subscription.createSubscription)(store);
         return {
             store,
             subscription,
-            getServerState: serverState ? ()=>serverState : undefined
+            getServerState: serverState ? ()=>serverState : undefined,
+            stabilityCheck,
+            noopCheck
         };
     }, [
         store,
-        serverState
+        serverState,
+        stabilityCheck,
+        noopCheck
     ]);
-    const previousState = (0, _react.useMemo)(()=>store.getState(), [
+    const previousState = _react.useMemo(()=>store.getState(), [
         store
     ]);
     (0, _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect)(()=>{
@@ -43727,7 +43809,7 @@ function Provider({ store, context, children, serverState }) {
         previousState
     ]);
     const Context = context || (0, _context.ReactReduxContext); // @ts-ignore 'AnyAction' is assignable to the constraint of type 'A', but 'A' could be instantiated with a different subtype
-    return /*#__PURE__*/ (0, _reactDefault.default).createElement(Context.Provider, {
+    return /*#__PURE__*/ _react.createElement(Context.Provider, {
         value: contextValue
     }, children);
 }
@@ -43764,11 +43846,10 @@ parcelHelpers.defineInteropFlag(exports);
  * @returns {Function} A `useStore` hook bound to the specified context.
  */ parcelHelpers.export(exports, "createStoreHook", ()=>createStoreHook);
 parcelHelpers.export(exports, "useStore", ()=>useStore);
-var _react = require("react");
 var _context = require("../components/Context");
 var _useReduxContext = require("./useReduxContext");
 function createStoreHook(context = (0, _context.ReactReduxContext)) {
-    const useReduxContext = context === (0, _context.ReactReduxContext) ? (0, _useReduxContext.useReduxContext) : ()=>(0, _react.useContext)(context);
+    const useReduxContext = context === (0, _context.ReactReduxContext) ? (0, _useReduxContext.useReduxContext) : (0, _useReduxContext.createReduxContextHook)(context);
     return function useStore() {
         const { store } = useReduxContext(); // @ts-ignore
         return store;
@@ -43776,7 +43857,7 @@ function createStoreHook(context = (0, _context.ReactReduxContext)) {
 }
 const useStore = /*#__PURE__*/ createStoreHook();
 
-},{"react":"21dqq","../components/Context":"ji81o","./useReduxContext":"3828k","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8RiCo":[function(require,module,exports) {
+},{"../components/Context":"ji81o","./useReduxContext":"3828k","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8RiCo":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 
@@ -43785,10 +43866,11 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "setUser", ()=>setUser);
 parcelHelpers.export(exports, "setToken", ()=>setToken);
+parcelHelpers.export(exports, "setFavoriteMovies", ()=>setFavoriteMovies);
 parcelHelpers.export(exports, "onLoggedOut", ()=>onLoggedOut);
 var _toolkit = require("@reduxjs/toolkit");
-const storedUser = JSON.parse(localStorage.getItem("user"));
-const storedToken = localStorage.getItem("token");
+const storedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+const storedToken = localStorage.getItem("token") || null;
 const initialState = {
     user: storedUser ? storedUser : null,
     token: storedToken ? storedToken : null
@@ -43807,6 +43889,9 @@ const usersSlice = (0, _toolkit.createSlice)({
             localStorage.setItem("token", token);
             state.token = token;
         },
+        setFavoriteMovies: (state, action)=>{
+            state.user.FavoriteMovies = action.payload;
+        },
         onLoggedOut: (state)=>{
             state.user = null;
             state.token = null;
@@ -43814,7 +43899,7 @@ const usersSlice = (0, _toolkit.createSlice)({
         }
     }
 });
-const { setUser, setToken, onLoggedOut } = usersSlice.actions;
+const { setUser, setToken, setFavoriteMovies, onLoggedOut } = usersSlice.actions;
 exports.default = usersSlice.reducer;
 
 },{"@reduxjs/toolkit":"lL1Ef","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lL1Ef":[function(require,module,exports) {
@@ -48028,11 +48113,13 @@ var _updateProfile = require("./update-profile");
 var _deleteUser = require("./delete-user");
 var _favoritesView = require("./favorites-view");
 var _reactRouter = require("react-router");
+var _reactRedux = require("react-redux");
 var _s = $RefreshSig$();
-const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFavorites })=>{
+const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, handleFavorites })=>{
     _s();
     const navigate = (0, _reactRouter.useNavigate)();
-    const user = JSON.parse(localStorage.getItem("user"));
+    // const user = JSON.parse(localStorage.getItem("user"));
+    // const movies = useSelector((state) => state.movies)
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Row), {
         className: "justify-content-center",
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Col), {
@@ -48047,15 +48134,17 @@ const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFavorites
                         name: user.Name,
                         username: user.Username,
                         email: user.Email,
-                        birthday: user.DateOfBirth
+                        birthday: user.DateOfBirth,
+                        favorites: user.FavoriteMovies,
+                        movies: movies
                     }, void 0, false, {
                         fileName: "src/components/profile-view/profile-view.jsx",
-                        lineNumber: 20,
+                        lineNumber: 21,
                         columnNumber: 21
                     }, undefined)
                 }, void 0, false, {
                     fileName: "src/components/profile-view/profile-view.jsx",
-                    lineNumber: 19,
+                    lineNumber: 20,
                     columnNumber: 17
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -48069,30 +48158,12 @@ const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFavorites
                         syncUser: syncUser
                     }, void 0, false, {
                         fileName: "src/components/profile-view/profile-view.jsx",
-                        lineNumber: 29,
+                        lineNumber: 32,
                         columnNumber: 21
                     }, undefined)
                 }, void 0, false, {
                     fileName: "src/components/profile-view/profile-view.jsx",
-                    lineNumber: 28,
-                    columnNumber: 17
-                }, undefined),
-                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                    children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _favoritesView.FavoriteMovies), {
-                        user: user,
-                        movies: movies,
-                        title: movies.Title,
-                        token: token,
-                        isFavoriteMovie: isFavoriteMovie,
-                        handleFavorites: handleFavorites
-                    }, void 0, false, {
-                        fileName: "src/components/profile-view/profile-view.jsx",
-                        lineNumber: 40,
-                        columnNumber: 21
-                    }, undefined)
-                }, void 0, false, {
-                    fileName: "src/components/profile-view/profile-view.jsx",
-                    lineNumber: 39,
+                    lineNumber: 31,
                     columnNumber: 17
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -48105,23 +48176,23 @@ const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFavorites
                         }
                     }, void 0, false, {
                         fileName: "src/components/profile-view/profile-view.jsx",
-                        lineNumber: 51,
+                        lineNumber: 54,
                         columnNumber: 21
                     }, undefined)
                 }, void 0, false, {
                     fileName: "src/components/profile-view/profile-view.jsx",
-                    lineNumber: 50,
+                    lineNumber: 53,
                     columnNumber: 17
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/components/profile-view/profile-view.jsx",
-            lineNumber: 18,
+            lineNumber: 19,
             columnNumber: 13
         }, undefined)
     }, void 0, false, {
         fileName: "src/components/profile-view/profile-view.jsx",
-        lineNumber: 17,
+        lineNumber: 18,
         columnNumber: 9
     }, undefined);
 };
@@ -48139,7 +48210,7 @@ $RefreshReg$(_c, "ProfileView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","react-bootstrap":"3AD9A","./user-profile":"7Frwr","./update-profile":"kDlg2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./delete-user":"fKFLs","./favorites-view":"ixdcL","react-router":"dbWyW"}],"7Frwr":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","react-bootstrap":"3AD9A","./user-profile":"7Frwr","./update-profile":"kDlg2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./delete-user":"fKFLs","./favorites-view":"ixdcL","react-router":"dbWyW","react-redux":"bdVon"}],"7Frwr":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$61c6 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -48156,15 +48227,20 @@ var _propTypes = require("prop-types");
 var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _reactBootstrap = require("react-bootstrap");
 var _reactRouterDom = require("react-router-dom");
+var _reactRedux = require("react-redux");
 var _s = $RefreshSig$();
 const UserProfile = ()=>{
     _s();
     const user = JSON.parse(localStorage.getItem("user"));
-    const name = (0, _react.useState)(user?.Name);
-    const username = (0, _react.useState)(user?.Username);
-    const email = (0, _react.useState)(user?.Email);
-    const birthday = (0, _react.useState)(user?.DateOfBirth);
-    formatedBirthday = birthday.toString().split("T")[0].replace(/-/g, "-");
+    const movies = (0, _reactRedux.useSelector)((state)=>state.movies); // Fetch movies from Redux state
+    const [name] = (0, _react.useState)(user?.Name); // Correct useState syntax
+    const [username] = (0, _react.useState)(user?.Username);
+    const [email] = (0, _react.useState)(user?.Email);
+    const [birthday] = (0, _react.useState)(user?.DateOfBirth ? new Date(user?.DateOfBirth) : ""); // Ensure birthday is a valid date object
+    // Format the birthday if available
+    const formattedBirthday = birthday ? birthday.toISOString().split("T")[0].replace(/-/g, "-") : "No birthday available";
+    // Filter the user's favorite movies
+    const favoriteMovies = movies.filter((movie)=>user?.FavoriteMovies?.includes(movie.id));
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Row), {
         className: "justify-content-center",
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Col), {
@@ -48176,55 +48252,109 @@ const UserProfile = ()=>{
                             children: "Account Details"
                         }, void 0, false, {
                             fileName: "src/components/profile-view/user-profile.jsx",
-                            lineNumber: 20,
+                            lineNumber: 27,
                             columnNumber: 34
                         }, undefined)
                     }, void 0, false, {
                         fileName: "src/components/profile-view/user-profile.jsx",
-                        lineNumber: 20,
+                        lineNumber: 27,
                         columnNumber: 21
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Body, {
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Text, {
                                 children: [
-                                    "Name: ",
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Name:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/profile-view/user-profile.jsx",
+                                        lineNumber: 29,
+                                        columnNumber: 36
+                                    }, undefined),
+                                    " ",
                                     name
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/profile-view/user-profile.jsx",
-                                lineNumber: 22,
+                                lineNumber: 29,
                                 columnNumber: 25
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Text, {
                                 children: [
-                                    "Username: ",
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Username:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/profile-view/user-profile.jsx",
+                                        lineNumber: 30,
+                                        columnNumber: 36
+                                    }, undefined),
+                                    " ",
                                     username
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/profile-view/user-profile.jsx",
-                                lineNumber: 23,
+                                lineNumber: 30,
                                 columnNumber: 25
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Text, {
                                 children: [
-                                    "Email: ",
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Email:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/profile-view/user-profile.jsx",
+                                        lineNumber: 31,
+                                        columnNumber: 36
+                                    }, undefined),
+                                    " ",
                                     email
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/profile-view/user-profile.jsx",
-                                lineNumber: 24,
+                                lineNumber: 31,
                                 columnNumber: 25
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Text, {
                                 children: [
-                                    "Birthday: ",
-                                    formatedBirthday
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                        children: "Birthday:"
+                                    }, void 0, false, {
+                                        fileName: "src/components/profile-view/user-profile.jsx",
+                                        lineNumber: 32,
+                                        columnNumber: 36
+                                    }, undefined),
+                                    " ",
+                                    formattedBirthday
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/profile-view/user-profile.jsx",
-                                lineNumber: 25,
+                                lineNumber: 32,
                                 columnNumber: 25
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Text, {
+                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                    children: "Favorites:"
+                                }, void 0, false, {
+                                    fileName: "src/components/profile-view/user-profile.jsx",
+                                    lineNumber: 33,
+                                    columnNumber: 36
+                                }, undefined)
+                            }, void 0, false, {
+                                fileName: "src/components/profile-view/user-profile.jsx",
+                                lineNumber: 33,
+                                columnNumber: 25
+                            }, undefined),
+                            favoriteMovies.length > 0 ? favoriteMovies.map((movie)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Text, {
+                                    children: movie.title
+                                }, movie.id, false, {
+                                    fileName: "src/components/profile-view/user-profile.jsx",
+                                    lineNumber: 36,
+                                    columnNumber: 33
+                                }, undefined)) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Text, {
+                                children: "No favorite movies found."
+                            }, void 0, false, {
+                                fileName: "src/components/profile-view/user-profile.jsx",
+                                lineNumber: 41,
+                                columnNumber: 29
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactRouterDom.Link), {
                                 to: "/",
@@ -48234,43 +48364,47 @@ const UserProfile = ()=>{
                                     children: "Back"
                                 }, void 0, false, {
                                     fileName: "src/components/profile-view/user-profile.jsx",
-                                    lineNumber: 27,
+                                    lineNumber: 44,
                                     columnNumber: 29
                                 }, undefined)
                             }, void 0, false, {
                                 fileName: "src/components/profile-view/user-profile.jsx",
-                                lineNumber: 26,
+                                lineNumber: 43,
                                 columnNumber: 25
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/profile-view/user-profile.jsx",
-                        lineNumber: 21,
+                        lineNumber: 28,
                         columnNumber: 21
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/profile-view/user-profile.jsx",
-                lineNumber: 19,
+                lineNumber: 26,
                 columnNumber: 17
             }, undefined)
         }, void 0, false, {
             fileName: "src/components/profile-view/user-profile.jsx",
-            lineNumber: 18,
+            lineNumber: 25,
             columnNumber: 13
         }, undefined)
     }, void 0, false, {
         fileName: "src/components/profile-view/user-profile.jsx",
-        lineNumber: 17,
+        lineNumber: 24,
         columnNumber: 9
     }, undefined);
 };
-_s(UserProfile, "nUVEN6bJJ+AAnHSwYP9wysyWjEA=");
+_s(UserProfile, "2j01mtNvTjBw4HAn6GT+LanhFAk=", false, function() {
+    return [
+        (0, _reactRedux.useSelector)
+    ];
+});
 _c = UserProfile;
 UserProfile.propTypes = {
-    name: (0, _propTypesDefault.default).string.isRequired,
-    username: (0, _propTypesDefault.default).string.isRequired,
-    email: (0, _propTypesDefault.default).string.isRequired,
+    name: (0, _propTypesDefault.default).string,
+    username: (0, _propTypesDefault.default).string,
+    email: (0, _propTypesDefault.default).string,
     birthday: (0, _propTypesDefault.default).string
 };
 var _c;
@@ -48281,7 +48415,7 @@ $RefreshReg$(_c, "UserProfile");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","prop-types":"7wKI2","react-bootstrap":"3AD9A","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-router-dom":"9xmpe"}],"kDlg2":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","prop-types":"7wKI2","react-bootstrap":"3AD9A","react-router-dom":"9xmpe","react-redux":"bdVon","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"kDlg2":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$844e = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -48710,7 +48844,7 @@ $RefreshReg$(_c, "FavoriteMovies");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","prop-types":"7wKI2","react-bootstrap":"3AD9A","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-router-dom":"9xmpe","react-redux":"bdVon"}],"b9CL2":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","prop-types":"7wKI2","react-router-dom":"9xmpe","react-bootstrap":"3AD9A","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-redux":"bdVon"}],"b9CL2":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "setMovies", ()=>setMovies);

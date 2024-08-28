@@ -92,7 +92,7 @@ export const MainView = ( ) => {
                     <ProfileView 
                       user={user} 
                       token={token} 
-                      movies={movies} 
+                      // movies={movies} 
                       // syncUser={syncUser}
                     />
                   </Col>

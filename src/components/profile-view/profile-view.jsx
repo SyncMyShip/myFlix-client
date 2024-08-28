@@ -5,12 +5,13 @@ import { UpdateProfile } from "./update-profile";
 import { DeleteUser } from "./delete-user";
 import { FavoriteMovies } from "./favorites-view";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 
-export const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFavorites }) => {
+export const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, handleFavorites }) => {
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem("user"));
-
+    // const user = JSON.parse(localStorage.getItem("user"));
+    // const movies = useSelector((state) => state.movies)
 
 
     return (
@@ -22,6 +23,8 @@ export const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFa
                         username={user.Username}
                         email={user.Email}
                         birthday={user.DateOfBirth}
+                        favorites={user.FavoriteMovies}
+                        movies={movies}
                     />
                 </div>
 
@@ -36,16 +39,16 @@ export const ProfileView = ({ token, movies, syncUser, isFavoriteMovie, handleFa
                         syncUser={syncUser}
                     /> 
                 </div>
-                <div>
+                {/* <div>
                     <FavoriteMovies
                         user={user}
                         movies={movies}
-                        title={movies.Title}
+                        // title={movies.Title}
                         token={token}
                         isFavoriteMovie={isFavoriteMovie}
                         handleFavorites={handleFavorites}
                     />
-                </div>
+                </div> */}
 
                 <div>
                     <DeleteUser
