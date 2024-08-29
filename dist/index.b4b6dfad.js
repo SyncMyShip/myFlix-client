@@ -48764,11 +48764,12 @@ var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactBootstrap = require("react-bootstrap");
 var _reactDefault = parcelHelpers.interopDefault(_react);
-var _usersSlice = require("../../state/users/usersSlice");
+// import { onLoggedOut } from "../../state/users/usersSlice";
 var _reactRouterDom = require("react-router-dom");
 var _reactRedux = require("react-redux");
+var _usersSlice = require("../../state/users/usersSlice");
 var _s = $RefreshSig$();
-const DeleteUser = ({ username, onLoggedOut })=>{
+const DeleteUser = ({ username })=>{
     _s();
     const [isDeleting, setIsDeleting] = (0, _react.useState)(false);
     const { user, token } = (0, _reactRedux.useSelector)((state)=>state.user);
@@ -48786,8 +48787,8 @@ const DeleteUser = ({ username, onLoggedOut })=>{
             });
             if (response.ok) {
                 alert("User successfully removed");
-                dispatch(onLoggedOut());
-            // navigate("/login")
+                dispatch((0, _usersSlice.onLoggedOut)());
+                navigate("/login");
             } else alert("Failed to remove user");
             setIsDeleting(false);
         } catch (err) {
@@ -48804,17 +48805,17 @@ const DeleteUser = ({ username, onLoggedOut })=>{
                 children: isDeleting ? "Deleting user..." : "Delete User"
             }, void 0, false, {
                 fileName: "src/components/profile-view/delete-user.jsx",
-                lineNumber: 43,
+                lineNumber: 44,
                 columnNumber: 17
             }, undefined)
         }, void 0, false, {
             fileName: "src/components/profile-view/delete-user.jsx",
-            lineNumber: 42,
+            lineNumber: 43,
             columnNumber: 13
         }, undefined)
     }, void 0, false, {
         fileName: "src/components/profile-view/delete-user.jsx",
-        lineNumber: 41,
+        lineNumber: 42,
         columnNumber: 9
     }, undefined);
 };

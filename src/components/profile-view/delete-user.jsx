@@ -2,11 +2,12 @@
 import{ useState } from "react";
 import { Button, Col } from "react-bootstrap";
 import React from "react";
-import { onLoggedOut } from "../../state/users/usersSlice";
+// import { onLoggedOut } from "../../state/users/usersSlice";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { onLoggedOut } from '../../state/users/usersSlice';
 
-export const DeleteUser = ({ username, onLoggedOut }) => {
+export const DeleteUser = ({ username}) => {
     const [isDeleting, setIsDeleting] = useState(false);
     const {user,token} = useSelector((state) => state.user)
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ export const DeleteUser = ({ username, onLoggedOut }) => {
             if (response.ok) {
                 alert("User successfully removed");
                 dispatch(onLoggedOut());
-                // navigate("/login")
+                navigate("/login")
             } else {
                 alert("Failed to remove user");
             }
