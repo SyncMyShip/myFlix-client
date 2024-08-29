@@ -30,8 +30,12 @@ export const SignupView = () => {
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then((response) => {
-            if (response.ok) {
+            
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data)
+            if (data) {
                 alert("Signup successful");
                 navigate('/login');
             } else {

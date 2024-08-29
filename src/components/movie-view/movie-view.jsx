@@ -63,8 +63,17 @@ export const MovieView = ({ syncUser }) => {
         <Row className="d-flex justify-content-center">
           {movie && (
             <CardGroup>
-              <Card>
+              <Card className="justify-content-center">
                 <Card.Img className="movie-view-img" src={movie.image} />
+                <Card.Footer>
+                <Button
+                        className="d-flex w-100 align-items-center justify-content-center" 
+                        onClick={handleFavorites}
+                        variant={isFavoriteMovie ? "danger" : "primary"}
+                    >
+                        {isFavoriteMovie ? "Remove from Favorites" : "Add to Favorites"}
+                    </Button>
+                </Card.Footer>
               </Card>
               <Card>
                 <Card.Header className="d-flex justify-content-center"><h2>{movie.title}</h2></Card.Header>
@@ -73,18 +82,11 @@ export const MovieView = ({ syncUser }) => {
                   <h5>Director:</h5><Card.Text>{movie.director}</Card.Text>
                   <h5>Genre:</h5><Card.Text>{movie.genre}</Card.Text>
                 </Card.Body>
-                <ButtonGroup className="align-self justify-content-center">
-                    <Button
-                        className=" d-flex justify-content-center" 
-                        onClick={handleFavorites}
-                        variant={isFavoriteMovie ? "danger" : "primary"}
-                    >
-                        {isFavoriteMovie ? "Remove from Favorites" : "Add to Favorites"}
-                    </Button>
+                <Card.Footer className="align-items-center">
                     <Link to={"/"}> 
-                        <Button className="text-white bg-dark back-button card-footer text-primary">Back</Button>
+                        <Button className="w-100 justify-content-center text-white d-flex bg-dark back-button card-footer text-primary">Back</Button>
                     </Link>
-                  </ButtonGroup>
+                  </Card.Footer>
               </Card>
             </CardGroup>  
           )}

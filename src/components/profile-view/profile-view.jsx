@@ -39,9 +39,9 @@ export const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, ha
                 <div>
                     <DeleteUser
                         username={user.Username}
-                        token={token}
-                        onLoggedOut={() => {
-                            localStorage.clear();
+                        // token={token}
+                        onClick={() => {
+                            dispatch(onLoggedOut())
                             navigate("/login")
                         }}
                     />
