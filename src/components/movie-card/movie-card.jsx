@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 export const MovieCard = ({ movie }) => {
 
     return (
-        <Card className="h-100 custom-card shadow-sm"> {/* Added `shadow-sm` for a subtle shadow */}
+        <Card className="h-100 custom-card"> {/* Added `shadow-sm` for a subtle shadow */}
             <Card.Header className="text-center">{movie.title}</Card.Header>
             <Card.Img 
                 className="card-img-top" 

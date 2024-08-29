@@ -37,7 +37,7 @@ export const UserProfile = () => {
                                 </Card.Text>
                             ))
                         ) : (
-                            <Card.Text>No favorite movies found.</Card.Text>
+                            <Card.Text>No favorites</Card.Text>
                         )}
                         <Link to={"/"}>
                             <Button variant="primary" className="back-button">Back</Button>

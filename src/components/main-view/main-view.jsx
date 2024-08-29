@@ -10,6 +10,7 @@ import { Row, Col } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setMovies } from "../../state/movies/moviesSlice";
+import { setToken, setUser, onLoggedOut } from "../../state/users/usersSlice";
 
 export const MainView = () => {
   const { user, token } = useSelector((state) => state.user);
@@ -37,7 +38,7 @@ export const MainView = () => {
         }));
         dispatch(setMovies(moviesFromApi));
       });
-  }, [token, dispatch]);
+  }, [token]);
 
   // Filter movies based on search input
   const filteredMovies = movies.filter((movie) =>
@@ -47,27 +48,41 @@ export const MainView = () => {
   // Only display the filtered movies in the movie list
   const displayMovies = moviesSearch ? filteredMovies : movies;
 
+  const onLoggedIn = (user, token) => {
+    dispatch(setUser(user));  // Dispatch user to Redux store
+    dispatch(setToken(token));  // Dispatch token to Redux store
+    localStorage.setItem("user", JSON.stringify(user));  // Sync with localStorage
+    localStorage.setItem("token", token);
+  };
+
+// const onLoggedOut = () => {
+//   setUser(null);
+//   setToken(null);
+//   localStorage.clear();
+// }
+
   return (
     <BrowserRouter>
       <NavigationBar
         user={user}
+        // onLoggedOut={dispatch(onLoggedOut)}
         moviesSearch={moviesSearch}
         setMoviesSearch={setMoviesSearch}
       />
       <Row className="justify-content-md-center">
         <Routes>
-          <Route
-            path="/signup"
-            element={
-              user ? (
-                <Navigate to="/" />
-              ) : (
-                <Col md={6} style={{ padding: "50px" }}>
-                  <SignupView />
-                </Col>
-              )
-            }
-          />
+        <Route
+  path="/signup"
+  element={
+    user ? (
+      <Navigate to="/" />
+    ) : (
+      <Col md={6} style={{ padding: "50px" }}>
+        <SignupView />
+      </Col>
+    )
+  }
+/>
           <Route
             path="/login"
             element={
@@ -75,7 +90,7 @@ export const MainView = () => {
                 <Navigate to="/" />
               ) : (
                 <Col md={6} style={{ padding: "50px" }}>
-                  <LoginView />
+                  <LoginView onLoggedIn={onLoggedIn}/>
                 </Col>
               )
             }

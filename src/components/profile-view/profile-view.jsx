@@ -27,7 +27,7 @@ export const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, ha
 
                 <div>
                     <UpdateProfile
-                        user={user}
+                        // user={user}
                         name={user.Name}
                         username={user.Username}
                         email={user.Email}

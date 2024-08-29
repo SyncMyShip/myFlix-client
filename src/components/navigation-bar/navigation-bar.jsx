@@ -4,10 +4,10 @@ import Navbar from 'react-bootstrap/Navbar';
 import { Link, useLocation } from "react-router-dom"
 import { Form } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
-import { setUser } from '../../state/users/usersSlice';
+import { onLoggedOut } from '../../state/users/usersSlice';
 
-export const NavigationBar = ({onLoggedOut, moviesSearch, setMoviesSearch}) => {
-  const user = useSelector((state) => state.user);
+export const NavigationBar = ({ user, moviesSearch, setMoviesSearch}) => {
+  // const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -18,19 +18,19 @@ export const NavigationBar = ({onLoggedOut, moviesSearch, setMoviesSearch}) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav className="me-auto">
-            {!user && (
-              <>
-                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                <Nav.Link as={Link} to="/signup">Signup</Nav.Link>
-              </>
-            )}
-            {user && (
-              <>
-                <Nav.Link as={Link} to="/">Home</Nav.Link>
-                <Nav.Link as={Link} to={`/users/${user.Username}`}>Profile</Nav.Link>
-                <Nav.Link onClick={() => dispatch(setUser(null))}>Logout</Nav.Link>
-              </>
-            )}
+          {!user && (  // Show these when user is not logged in
+    <>
+      <Nav.Link as={Link} to="/login">Login</Nav.Link>
+      <Nav.Link as={Link} to="/signup">Signup</Nav.Link>
+    </>
+  )}
+  {user && (  // Show these when user is logged in
+    <>
+      <Nav.Link as={Link} to="/">Home</Nav.Link>
+      <Nav.Link as={Link} to={`/users/${user.Username}`}>Profile</Nav.Link>
+      <Nav.Link onClick={() => dispatch(onLoggedOut())}>Logout</Nav.Link>
+    </>
+  )}
             {location.pathname === '/' && (
               <Form className="d-flex"> 
                 <Form.Control

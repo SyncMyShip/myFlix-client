@@ -4,9 +4,9 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../../state/users/usersSlice";
 
-export const UpdateProfile = ({ token }) => {
+export const UpdateProfile = ({ }) => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.user.user);
+    const { user, token } = useSelector((state) => state.user);
     const [name, setName] = useState(user?.Name || "");
     const [username, setUsername] = useState(user?.Username || "");
     const [email, setEmail] = useState(user?.Email || "");
@@ -57,10 +57,10 @@ export const UpdateProfile = ({ token }) => {
 
     return (
         <Row className="justify-content-center">
-            <Col className="mb-3">
+            <Col className="mb-4">
                 <Card>
                     <Card.Header><h2>Update User</h2></Card.Header>
-                    <Form onSubmit={handleSubmit}>
+                    <Form className="px-3" onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formName">
                             <Form.Label>Name:</Form.Label>
                             <Form.Control
@@ -102,6 +102,7 @@ export const UpdateProfile = ({ token }) => {
                             variant="primary"
                             type="submit"
                             disabled={!isValid}
+                            className="mb-3"
                         >
                             Update
                         </Button>
