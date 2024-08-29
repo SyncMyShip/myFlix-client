@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setToken, setUser } from "../../state/users/usersSlice";
 
-export const LoginView = ({ onLoggedIn }) => {
+export const LoginView = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -27,29 +27,15 @@ export const LoginView = ({ onLoggedIn }) => {
             },
             body: JSON.stringify(data)
         })
-        // .then((response) => response.json())
-        // .then((data) => {
-        //     console.log("Login response: ", data);
-        //     if (data) {
-        //         // const { user, token } = response.data.data;
-        //         dispatch(setUser(user));
-        //         dispatch(setToken(token));
-        //     } else {
-        //         alert("No such user");
-        //         navigate("/signup")
-        //     }
-        // })
         .then((response) => response.json())
         .then((data) => {
             console.log("Login response: ", data);
-            if (data.token) {// Assuming the response has a 'token' property when successful
-                const { user, token } = data; // Extract user and token from data
-                dispatch(setUser(user)); // Dispatch user to Redux
-                dispatch(setToken(token)); // Dispatch token to Redux
-                localStorage.setItem("user", JSON.stringify(user)); // Store in localStorage
-                localStorage.setItem("token", token); // Store token
-                // onLoggedIn(user, token); // Call the onLoggedIn handler if necessary
-                // navigate("/"); // Redirect after successful login
+            if (data.token) {
+                const { user, token } = data; 
+                dispatch(setUser(user)); 
+                dispatch(setToken(token)); 
+                localStorage.setItem("user", JSON.stringify(user)); 
+                localStorage.setItem("token", token);
             } else {
                 alert("No such user");
                 navigate("/signup");

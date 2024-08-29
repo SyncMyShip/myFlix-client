@@ -14,7 +14,6 @@ export const UpdateProfile = ({ }) => {
     const [isValid, setIsValid] = useState(false);
 
     useEffect(() => {
-        // Form is valid if all fields have values
         const isFormValid = name && username && email && birthday;
         setIsValid(isFormValid);
     }, [name, username, email, birthday]);

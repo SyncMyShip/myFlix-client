@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 
 
 
-export const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, handleFavorites }) => {
+export const ProfileView = ({ user, movies, token }) => {
     const navigate = useNavigate();
 
 
@@ -27,7 +27,6 @@ export const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, ha
 
                 <div>
                     <UpdateProfile
-                        // user={user}
                         name={user.Name}
                         username={user.Username}
                         email={user.Email}
@@ -39,7 +38,6 @@ export const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, ha
                 <div>
                     <DeleteUser
                         username={user.Username}
-                        // token={token}
                         onClick={() => {
                             dispatch(onLoggedOut())
                             navigate("/login")

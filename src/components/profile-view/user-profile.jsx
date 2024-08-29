@@ -16,7 +16,6 @@ export const UserProfile = () => {
         ? birthday.toISOString().split('T')[0].replace(/-/g, '-')
         : "No birthday available";
 
-    // Filter the user's favorite movies
     const favoriteMovies = movies.filter((movie) => user?.FavoriteMovies?.includes(movie.id));
 
     return (

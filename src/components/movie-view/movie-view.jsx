@@ -1,5 +1,3 @@
-import PropTypes from "prop-types";
-import "./movie-view.scss";
 import { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
@@ -22,9 +20,6 @@ export const MovieView = ({ syncUser }) => {
     const dispatch = useDispatch();
 
     const isFavoriteMovie = user?.FavoriteMovies?.includes(movie?.id) || false;
-    // let isFavoriteMovie = user.FavoriteMovies
-    // isFavoriteMovie ? true : false
-    // console.log(user.FavoriteMovies)
   
     const handleFavorites = async () => {
       const method = isFavoriteMovie ? "DELETE" : "POST";
@@ -54,10 +49,6 @@ export const MovieView = ({ syncUser }) => {
         console.error("Error updating Favorites:", err);
       }
     };
-
-//     const onMoviesSearch = movies.filter((movie) =>
-//     movie.title.toLowerCase().includes(moviesSearch.toLocaleLowerCase())
-// ); 
 
     return (
         <Row className="d-flex justify-content-center">

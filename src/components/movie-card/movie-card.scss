@@ -1,13 +1,10 @@
 .custom-card {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    // padding: 20px;
-    // stre: cover;
-    height: 100%; /* Ensures cards have consistent height */
+    height: 100%; 
   }
   
   .custom-card img {
     border-radius: 10px 10px 0 0;
-    // height: 200px; /* Ensures images have consistent height */
     object-fit: cover;
   }
