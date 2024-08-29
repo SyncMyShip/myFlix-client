@@ -48788,7 +48788,11 @@ const DeleteUser = ({ username })=>{
             if (response.ok) {
                 alert("User successfully removed");
                 dispatch((0, _usersSlice.onLoggedOut)());
-                navigate("/login");
+                setIsDeleting(false);
+                console.log("Returning to login");
+                setTimeout(()=>{
+                    navigate("/login");
+                }, 100);
             } else alert("Failed to remove user");
             setIsDeleting(false);
         } catch (err) {
@@ -48805,17 +48809,17 @@ const DeleteUser = ({ username })=>{
                 children: isDeleting ? "Deleting user..." : "Delete User"
             }, void 0, false, {
                 fileName: "src/components/profile-view/delete-user.jsx",
-                lineNumber: 44,
+                lineNumber: 48,
                 columnNumber: 17
             }, undefined)
         }, void 0, false, {
             fileName: "src/components/profile-view/delete-user.jsx",
-            lineNumber: 43,
+            lineNumber: 47,
             columnNumber: 13
         }, undefined)
     }, void 0, false, {
         fileName: "src/components/profile-view/delete-user.jsx",
-        lineNumber: 42,
+        lineNumber: 46,
         columnNumber: 9
     }, undefined);
 };

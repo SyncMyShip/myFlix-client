@@ -27,7 +27,11 @@ export const DeleteUser = ({ username}) => {
             if (response.ok) {
                 alert("User successfully removed");
                 dispatch(onLoggedOut());
-                navigate("/login")
+                setIsDeleting(false);
+                console.log("Returning to login")
+                setTimeout(() => {
+                    navigate("/login")
+                }, 100);
             } else {
                 alert("Failed to remove user");
             }
