@@ -1,10 +1,12 @@
 import PropTypes from "prop-types";
 import "./movie-view.scss";
+import { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { useParams } from "react-router";
+
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../../state/users/usersSlice";
@@ -15,9 +17,13 @@ export const MovieView = ({ syncUser }) => {
     const { Title } = useParams();
     const movie = movies.find((m) => m.title === Title);
     const { user, token } = useSelector((state) => state.user);
+    const [moviesSearch, setMoviesSearch] = useState("");
     const dispatch = useDispatch();
 
     const isFavoriteMovie = user?.FavoriteMovies?.includes(movie?.id) || false;
+    // let isFavoriteMovie = user.FavoriteMovies
+    // isFavoriteMovie ? true : false
+    // console.log(user.FavoriteMovies)
   
     const handleFavorites = async () => {
       const method = isFavoriteMovie ? "DELETE" : "POST";
@@ -47,6 +53,10 @@ export const MovieView = ({ syncUser }) => {
         console.error("Error updating Favorites:", err);
       }
     };
+
+//     const onMoviesSearch = movies.filter((movie) =>
+//     movie.title.toLowerCase().includes(moviesSearch.toLocaleLowerCase())
+// ); 
 
     return (
         <Row className="justify-content-center">

@@ -8,10 +8,13 @@ const moviesSlice = createSlice({
     reducers: {
         setMovies: (state, action) => {
             return action.payload
+        },
+        setMovieFilter: (state, action) => {
+            state.filter = action.payload;
         }
     }
 });
 
-export const { setMovies } = moviesSlice.actions;
+export const { setMovies, setMovieFilter } = moviesSlice.actions;
 
 export default moviesSlice.reducer;
