@@ -12,11 +12,11 @@ export const NavigationBar = ({onLoggedOut, moviesSearch, setMoviesSearch}) => {
   const location = useLocation();
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary navbar-static-top">
+    <Navbar expand="lg" className="ms-auto bg-body-tertiary navbar-static-top">
       <Container>
         <Navbar.Brand as={Link} to="/"><h1>Reel Rendezvous</h1></Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav className="me-auto">
             {!user && (
               <>
@@ -32,7 +32,7 @@ export const NavigationBar = ({onLoggedOut, moviesSearch, setMoviesSearch}) => {
               </>
             )}
             {location.pathname === '/' && (
-              <Form className="d-flex align-items-right"> 
+              <Form className="d-flex"> 
                 <Form.Control
                     className="me-4"
                     type="search"

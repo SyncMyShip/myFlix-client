@@ -10,6 +10,7 @@ import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../../state/users/usersSlice";
+import { ButtonGroup, CardGroup } from "react-bootstrap";
 
 
 export const MovieView = ({ syncUser }) => {
@@ -59,29 +60,34 @@ export const MovieView = ({ syncUser }) => {
 // ); 
 
     return (
-        <Row className="justify-content-center">
-            <Col md={10}>
-                {movie && (
-                    <Card>
-                        <Card.Header className="d-flex justify-content-center">{movie.title}</Card.Header>
-                        <Card.Img className="movie-view-img w-100" src={movie.image} />
-                        <Card.Body>
-                            <Card.Text >Description: {movie.description}</Card.Text>
-                            <Card.Text>Director: {movie.director}</Card.Text>
-                            <Card.Text>Genre: {movie.genre}</Card.Text>
-                            <Button 
-                                onClick={handleFavorites}
-                                variant={isFavoriteMovie ? "danger" : "primary"}
-                            >
-                                {isFavoriteMovie ? "Remove from Favorites" : "Add to Favorites"}
-                            </Button>
-                        </Card.Body>
-                        <Link to={"/"}> 
-                            <Button className="back-button w-100 justify-content-cener">Back</Button>
-                        </Link>
-                    </Card>
-                )}
-            </Col>
+        <Row className="d-flex justify-content-center">
+          {movie && (
+            <CardGroup>
+              <Card>
+                <Card.Img className="movie-view-img" src={movie.image} />
+              </Card>
+              <Card>
+                <Card.Header className="d-flex justify-content-center"><h2>{movie.title}</h2></Card.Header>
+                <Card.Body>
+                  <h5>Description:</h5><Card.Text>{movie.description}</Card.Text>
+                  <h5>Director:</h5><Card.Text>{movie.director}</Card.Text>
+                  <h5>Genre:</h5><Card.Text>{movie.genre}</Card.Text>
+                </Card.Body>
+                <ButtonGroup className="align-self justify-content-center">
+                    <Button
+                        className=" d-flex justify-content-center" 
+                        onClick={handleFavorites}
+                        variant={isFavoriteMovie ? "danger" : "primary"}
+                    >
+                        {isFavoriteMovie ? "Remove from Favorites" : "Add to Favorites"}
+                    </Button>
+                    <Link to={"/"}> 
+                        <Button className="text-white bg-dark back-button card-footer text-primary">Back</Button>
+                    </Link>
+                  </ButtonGroup>
+              </Card>
+            </CardGroup>  
+          )}
         </Row>
     );
 };

@@ -101,8 +101,8 @@ export const MainView = () => {
                 ) : movies.length === 0 ? (
                   <Col>The list is empty!</Col>
                 ) : (
-                  <Col md={6} style={{ padding: "50px" }}>
-                    <MovieView
+                  <Col md={9}>
+                    <MovieView 
                       // movies={movies}
                       // token={token}
                       // syncUser={syncUser}
@@ -122,7 +122,7 @@ export const MainView = () => {
               ) : (
                 <>
                   {displayMovies.map((movie) => (
-                    <Col className="mb-5" md={3} key={movie.id}>
+                    <Col className="mb-5 d-flex" xs={12} sm={9} md={4} lg={2} key={movie.id}>
                       <MovieCard movie={movie} />
                     </Col>
                   ))}
