@@ -13,7 +13,7 @@ export const ProfileView = ({ user, movies, token, syncUser, isFavoriteMovie, ha
 
     return (
         <Row className="justify-content-center">
-            <Col md={10} className="align-items-stretch" style={{ padding: "50px" }}>
+            <Col md={10} className="align-items-stretch">
                 <div>
                     <UserProfile
                         name={user.Name}

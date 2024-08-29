@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { Form } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../state/users/usersSlice';
@@ -9,9 +9,10 @@ import { setUser } from '../../state/users/usersSlice';
 export const NavigationBar = ({onLoggedOut, moviesSearch, setMoviesSearch}) => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const location = useLocation();
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary sticky-navbar" fixed="top">
+    <Navbar expand="lg" className="bg-body-tertiary navbar-static-top">
       <Container>
         <Navbar.Brand as={Link} to="/"><h1>Reel Rendezvous</h1></Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -30,15 +31,17 @@ export const NavigationBar = ({onLoggedOut, moviesSearch, setMoviesSearch}) => {
                 <Nav.Link onClick={() => dispatch(setUser(null))}>Logout</Nav.Link>
               </>
             )}
-            <Form className="d-flex align-items-right"> 
-              <Form.Control
-                  className="me-4"
-                  type="search"
-                  value={moviesSearch}
-                  placeholder="Search for movie"
-                  onChange={(e) => setMoviesSearch(e.target.value)}
-              />
-          </Form>
+            {location.pathname === '/' && (
+              <Form className="d-flex align-items-right"> 
+                <Form.Control
+                    className="me-4"
+                    type="search"
+                    value={moviesSearch}
+                    placeholder="Search for movie"
+                    onChange={(e) => setMoviesSearch(e.target.value)}
+                />
+              </Form>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
