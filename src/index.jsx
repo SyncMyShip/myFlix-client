@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 
 // import statement to indicate that ./index.scss needs to be bundled
 import "./index.scss";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 // main component 
