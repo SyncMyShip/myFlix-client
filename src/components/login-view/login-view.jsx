@@ -2,11 +2,14 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { setToken, setUser } from "../../state/users/usersSlice";
 
-export const LoginView = ({ onLoggedIn }) => {
+export const LoginView = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -20,19 +23,22 @@ export const LoginView = ({ onLoggedIn }) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+
             },
             body: JSON.stringify(data)
         })
         .then((response) => response.json())
         .then((data) => {
             console.log("Login response: ", data);
-            if (data.user) {
-                localStorage.setItem("user", JSON.stringify(data.user));
-                localStorage.setItem("token", data.token);
-                onLoggedIn(data.user, data.token);
+            if (data.token) {
+                const { user, token } = data; 
+                dispatch(setUser(user)); 
+                dispatch(setToken(token)); 
+                localStorage.setItem("user", JSON.stringify(user)); 
+                localStorage.setItem("token", token);
             } else {
                 alert("No such user");
-                navigate("/signup")
+                navigate("/signup");
             }
         })
         .catch((e) => {
